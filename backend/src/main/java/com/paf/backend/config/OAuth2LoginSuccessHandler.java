@@ -2,9 +2,9 @@ package com.paf.backend.config;
 
 
 
-import com.pafbackend.backend.model.User;
-import com.pafbackend.backend.security.JwtUtil;
-import com.pafbackend.backend.service.UserService;
+import com.paf.backend.model.User;
+import com.paf.backend.security.JwtUtil;
+import com.paf.backend.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import org.springframework.security.core.Authentication;
