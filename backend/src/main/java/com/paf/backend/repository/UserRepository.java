@@ -1,6 +1,5 @@
 package com.paf.backend.repository;
 
-
 import com.paf.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
