@@ -14,6 +14,8 @@ import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport"
 import ForgotPassword from "../pages/ForgotPassword";
 import BookingRequest from "../pages/BookingRequest";
 import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
+import MyBookings from "../pages/MyBookings";
+
 
 export default function AppRoutes() {
   return (
@@ -37,7 +39,8 @@ export default function AppRoutes() {
 
           {/* 2. Define the child paths */}
           <Route path="overview" element={<Overview />} />
-          <Route path="bookings" element={<BookingRequest />} />
+          <Route path="bookings" element={<MyBookings />} />
+          <Route path="new-request" element={<BookingRequest />} />
           <Route path="tickets" element={<h1>Support Tickets</h1>} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
