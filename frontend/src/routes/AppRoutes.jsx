@@ -12,11 +12,16 @@ import AdminDashboard from "../pages/admin/adminDashboard";
 import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
+import BookingRequest from "../pages/BookingRequest";
+import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
@@ -32,7 +37,7 @@ export default function AppRoutes() {
 
           {/* 2. Define the child paths */}
           <Route path="overview" element={<Overview />} />
-          <Route path="bookings" element={<h1>My Bookings</h1>} />
+          <Route path="bookings" element={<BookingRequest />} />
           <Route path="tickets" element={<h1>Support Tickets</h1>} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
@@ -42,7 +47,7 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="user_management" element={<AdminUserManagement />} />
-          <Route path="booking" element={<h1>Booking</h1>} />
+          <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
           <Route path="assest" element={<h1>Assets</h1>} />
         </Route>
