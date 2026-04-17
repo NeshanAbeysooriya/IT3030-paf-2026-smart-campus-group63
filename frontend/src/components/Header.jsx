@@ -26,7 +26,7 @@ export default function Header() {
             <Link to="/home" className="hover:text-indigo-600 transition-colors">Home</Link>
             <Link to="/about" className="hover:text-indigo-600 transition-colors">About Us</Link>
             <Link to="/assets" className="hover:text-indigo-600 transition-colors">Assets</Link>
-            <Link to="/bookings" className="hover:text-indigo-600 transition-colors">Bookings</Link>
+            <Link to="/dashboard/new-request" className="hover:text-indigo-600 transition-colors">Bookings</Link>
           </nav>
 
           <div className="hidden md:flex flex-grow max-w-lg relative group">
