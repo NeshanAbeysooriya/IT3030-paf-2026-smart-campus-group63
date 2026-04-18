@@ -1,4 +1,4 @@
-package com.pafbackend.backend.model;
+package com.paf.backend.model;
 
 import jakarta.persistence.*;
 

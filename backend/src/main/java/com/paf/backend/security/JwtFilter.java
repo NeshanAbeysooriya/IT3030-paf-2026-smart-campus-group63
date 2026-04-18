@@ -1,7 +1,5 @@
 package com.paf.backend.security;
 
-
-
 import com.paf.backend.model.User;
 import com.paf.backend.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -36,6 +34,11 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
+
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         System.out.println("🔥 JWT FILTER HIT: " + request.getServletPath());
 
