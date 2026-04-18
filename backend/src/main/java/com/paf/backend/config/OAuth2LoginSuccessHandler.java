@@ -1,7 +1,5 @@
 package com.paf.backend.config;
 
-
-
 import com.paf.backend.model.User;
 import com.paf.backend.security.JwtUtil;
 import com.paf.backend.service.UserService;
@@ -65,7 +63,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 java.nio.charset.StandardCharsets.UTF_8);
 
         response.sendRedirect(
-                "http://localhost:5173/login-success" +
+                "http://localhost:5174/login-success" +
                         "?token=" + token +
                         "&name=" + name +
                         "&email=" + email +

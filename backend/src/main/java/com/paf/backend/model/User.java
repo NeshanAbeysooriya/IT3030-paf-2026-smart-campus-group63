@@ -1,8 +1,8 @@
 package com.paf.backend.model;
 
-
-
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -28,6 +28,13 @@ public class User {
 
     @Column(nullable = false)
     private boolean isActive = true;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     // ===================== GETTERS =====================
 
@@ -63,6 +70,10 @@ public class User {
         return isActive;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     // ===================== SETTERS =====================
 
     public void setId(Long id) {
@@ -96,4 +107,9 @@ public class User {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }
