@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import UserData from "./UserData"; // Import the new component
+import UserData from "./UserData"; 
 import { useState } from "react";
 import NotificationPanel from "./NotificationPanel";
 
@@ -35,10 +35,13 @@ export default function Header() {
             <Link to="/assets" className="hover:text-indigo-600">
               Assets
             </Link>
-            <Link to="/bookings" className="hover:text-indigo-600">
+            
+            {/* UPDATED: Points to the Request Form now */}
+            <Link to="/dashboard/request-booking" className="hover:text-indigo-600">
               Bookings
             </Link>
-            <Link to="/tickets" className="hover:text-indigo-600">
+            
+            <Link to="/dashboard/tickets" className="hover:text-indigo-600">
               Ticket
             </Link>
           </nav>
@@ -93,7 +96,6 @@ export default function Header() {
             <NotificationPanel onClose={() => setOpenNotif(false)} />
           )}
 
-          {/* Render our new component here */}
           <UserData />
         </div>
       </div>
