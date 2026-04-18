@@ -11,8 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
-// OPTIONAL: Since you have SecurityConfig, you can restrict this to your React
-// URL
 @CrossOrigin(origins = "http://localhost:5173")
 public class BookingController {
 
@@ -26,17 +24,22 @@ public class BookingController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    // 2. GET: Retrieve all bookings (For Admin View)
-    // Map this to /api/bookings/all to match your SecurityConfig ADMIN rule
+    /**
+     * UPDATED: Added @GetMapping without a sub-path.
+     * This ensures that when React calls "http://localhost:8081/api/bookings",
+     * it correctly triggers this method instead of a 405 error.
+     */
+    @GetMapping
+    public ResponseEntity<List<Booking>> getAllBookingsDirect() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+
+    // 2. GET: Retrieve all bookings (Explicitly for /all)
     @GetMapping("/all")
     public ResponseEntity<List<Booking>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    /**
-     * FIX 1: Added ("userId") inside @PathVariable.
-     * This ensures the {userId} in the URL maps perfectly to the Long variable.
-     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable("userId") Long userId) {
         List<Booking> userBookings = bookingService.getBookingsByUserId(userId);
@@ -46,7 +49,7 @@ public class BookingController {
     // 3. PATCH: Update status
     @PatchMapping("/{id}/status")
     public ResponseEntity<Booking> updateBookingStatus(
-            @PathVariable("id") Long id, // Added ("id") for strict mapping
+            @PathVariable("id") Long id,
             @RequestParam String status,
             @RequestParam(required = false) String reason) {
 

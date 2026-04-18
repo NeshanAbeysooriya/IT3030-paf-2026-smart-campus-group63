@@ -14,19 +14,27 @@ import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport"
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
 
+// BOOKING IMPORTS
+import MyBookings from "../pages/MyBookings";
+import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
+import BookingRequest from "../pages/BookingRequest";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ROOT REDIRECT */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-
+        {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
-        {/* USER DASHBOARD */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* USER DASHBOARD ROUTES (Nested) */}
         <Route
           path="/dashboard"
           element={
@@ -35,35 +43,30 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         >
-          {/* 1. THIS IS THE KEY: Redirect /dashboard to /dashboard/overview */}
-          <Route
-            index
-            element={<Navigate to="/dashboard/overview" replace />}
-          />
-
-          {/* 2. Define the child paths */}
+          {/* Automatically redirect /dashboard to /dashboard/overview */}
+          <Route index element={<Navigate to="/dashboard/overview" replace />} />
+          
           <Route path="overview" element={<Overview />} />
-          <Route
-            path="bookings"
-            element={
-              <ProtectedRoute allowedRoles={["USER"]}>
-                <h1>My Bookings</h1>
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="tickets"
-            element={
-              <ProtectedRoute allowedRoles={["USER"]}>
-                <h1>Support Tickets</h1>
-              </ProtectedRoute>
-            }
-          />
+          
+          {/* This matches /dashboard/request-booking */}
+          <Route path="request-booking" element={<BookingRequest />} />
+          
+          {/* This matches /dashboard/bookings */}
+          <Route path="bookings" element={<MyBookings />} />
+          
+          <Route path="tickets" element={<h1>Support Tickets</h1>} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
-        {/* ADMIN ROUTES */}
-        <Route path="/admin" element={<AdminPage />}>
+        {/* ADMIN ROUTES (Nested) */}
+        <Route 
+          path="/admin" 
+          element={
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="user_management" element={<AdminUserManagement />} />
@@ -71,12 +74,13 @@ export default function AppRoutes() {
             path="user_management/report"
             element={<AdminUserManagementReport />}
           />
-          <Route path="booking" element={<h1>Booking</h1>} />
+          <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
           <Route path="assest" element={<h1>Assets</h1>} />
         </Route>
 
-        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* CATCH-ALL: Redirect any unknown URL to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
