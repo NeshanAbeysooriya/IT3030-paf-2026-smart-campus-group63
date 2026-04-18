@@ -57,6 +57,7 @@ export default function Register() {
       toast.success("Account Created. Please Login.");
       navigate("/login");
     } catch (err) {
+      console.log("Registration error", err);
       toast.error(err.response?.data || "Registration failed. Try again.");
     } finally {
       setIsLoading(false);

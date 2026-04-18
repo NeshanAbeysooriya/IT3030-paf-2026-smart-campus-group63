@@ -70,6 +70,8 @@ export default function Login() {
         navigate("/home");
       }
     } catch (err) {
+      setIsLoading(false);
+
       const message = err.response?.data?.message || err.response?.data;
 
       if (message === "Invalid password") {

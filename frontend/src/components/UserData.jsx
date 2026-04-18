@@ -74,15 +74,12 @@ export default function UserData() {
             </div>
 
             {/* Links */}
-            {isActive && (
-              <Link
-                to="/dashboard"
-                onClick={() => setIsProfileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors"
-              >
-                User Dashboard
-              </Link>
-            )}
+           <Link
+              to="/dashboard"
+              className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors"
+            >
+              User Dashboard
+            </Link>
 
             {/* Admin Link (optional future use) */}
             {userRole === "ADMIN" && (
