@@ -13,13 +13,15 @@ import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
+import BookingRequest from "../pages/BookingRequest";
+import MyBookings from "../pages/MyBookings";
+import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -47,7 +49,7 @@ export default function AppRoutes() {
             path="bookings"
             element={
               <ProtectedRoute allowedRoles={["USER"]}>
-                <h1>My Bookings</h1>
+                <MyBookings />
               </ProtectedRoute>
             }
           />
@@ -71,12 +73,13 @@ export default function AppRoutes() {
             path="user_management/report"
             element={<AdminUserManagementReport />}
           />
-          <Route path="booking" element={<h1>Booking</h1>} />
+          <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
           <Route path="assest" element={<h1>Assets</h1>} />
         </Route>
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="bookings" element={<BookingRequest />} />
       </Routes>
     </BrowserRouter>
   );
