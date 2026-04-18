@@ -13,6 +13,7 @@ public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+    private NotificationService notificationService;
 
     public Booking requestBooking(Booking booking) {
         List<Booking> conflicts = bookingRepository.findOverlappingBookings(
