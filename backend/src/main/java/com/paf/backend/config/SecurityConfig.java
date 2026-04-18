@@ -1,7 +1,7 @@
 package com.paf.backend.config;
 
-
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(
+                                                                HttpMethod.OPTIONS, "/**",
                                                                 "/api/auth/**",
                                                                 "/uploads/**",
                                                                 "/api/users/register",
@@ -45,7 +46,7 @@ public class SecurityConfig {
                                                 .permitAll()
                                                 .requestMatchers("/api/users/all").hasRole("ADMIN")
                                                 .requestMatchers("/api/users/**").authenticated()
-                                                .anyRequest().authenticated())
+                                                .anyRequest().permitAll())
                                 .exceptionHandling(ex -> ex
                                                 .authenticationEntryPoint(
                                                                 new org.springframework.security.web.authentication.HttpStatusEntryPoint(
@@ -62,7 +63,7 @@ public class SecurityConfig {
 
                 CorsConfiguration config = new CorsConfiguration();
 
-                config.setAllowedOrigins(List.of("http://localhost:5173"));
+                config.setAllowedOriginPatterns(List.of("http://localhost:*"));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);

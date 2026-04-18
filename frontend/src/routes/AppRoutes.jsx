@@ -12,10 +12,7 @@ import AdminDashboard from "../pages/admin/adminDashboard";
 import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
-import BookingRequest from "../pages/BookingRequest";
-import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
-import MyBookings from "../pages/MyBookings";
-
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function AppRoutes() {
   return (
@@ -30,7 +27,14 @@ export default function AppRoutes() {
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
         {/* USER DASHBOARD */}
-        <Route path="/dashboard" element={<UserDashboard />}>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["USER"]}>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        >
           {/* 1. THIS IS THE KEY: Redirect /dashboard to /dashboard/overview */}
           <Route
             index
@@ -39,9 +43,22 @@ export default function AppRoutes() {
 
           {/* 2. Define the child paths */}
           <Route path="overview" element={<Overview />} />
-          <Route path="bookings" element={<MyBookings />} />
-          <Route path="new-request" element={<BookingRequest />} />
-          <Route path="tickets" element={<h1>Support Tickets</h1>} />
+          <Route
+            path="bookings"
+            element={
+              <ProtectedRoute allowedRoles={["USER"]}>
+                <h1>My Bookings</h1>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="tickets"
+            element={
+              <ProtectedRoute allowedRoles={["USER"]}>
+                <h1>Support Tickets</h1>
+              </ProtectedRoute>
+            }
+          />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
@@ -50,12 +67,15 @@ export default function AppRoutes() {
           <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="user_management" element={<AdminUserManagement />} />
-          <Route path="booking" element={<AdminBookingManagement />} />
+          <Route
+            path="user_management/report"
+            element={<AdminUserManagementReport />}
+          />
+          <Route path="booking" element={<h1>Booking</h1>} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
           <Route path="assest" element={<h1>Assets</h1>} />
         </Route>
 
-        <Route path="/admin/user_management/report" element={<AdminUserManagementReport />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>

@@ -6,10 +6,11 @@ export default function UserData() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
 
+  const isActive = localStorage.getItem("active") === "true";
+
   // 🔥 Get data from localStorage
   const userName = localStorage.getItem("name") || "User";
   const userRole = localStorage.getItem("role") || "USER";
-  
 
   // 🔥 Profile image fallback logic
   const profileImage = localStorage.getItem("image");
@@ -73,9 +74,8 @@ export default function UserData() {
             </div>
 
             {/* Links */}
-            <Link
+           <Link
               to="/dashboard"
-              onClick={() => setIsProfileOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-colors"
             >
               User Dashboard
