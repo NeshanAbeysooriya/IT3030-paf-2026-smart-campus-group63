@@ -13,20 +13,40 @@ const MyBookings = () => {
     useEffect(() => {
         const fetchMyBookings = async () => {
             try {
+                // 1. Setup identifying data
                 const userId = 1; 
-                const response = await axios.get(`http://localhost:8081/api/bookings/user/${userId}`);
+                const token = localStorage.getItem('token'); 
+
+                // 2. Safety Check: If token is missing or malformed, stop here
+                if (!token || token === 'null' || token === 'undefined') {
+                    console.error("Authentication token is missing");
+                    setLoading(false);
+                    return;
+                }
+
+                // 3. API Call
+                const response = await axios.get(`http://localhost:8081/api/bookings/user/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}` 
+                    }
+                });
+
                 setBookings(response.data);
             } catch (error) {
+                // Logs detailed error to console for debugging
+                console.error("Fetch error details:", error.response?.data || error.message);
                 toast.error("Unable to sync with server");
             } finally {
                 setLoading(false);
             }
         };
+
         fetchMyBookings();
     }, []);
 
     const getStatusStyles = (status) => {
-        switch (status?.toUpperCase()) {
+        const s = status?.toUpperCase() || 'PENDING';
+        switch (s) {
             case 'APPROVED':
                 return 'bg-emerald-50 text-emerald-600 border-emerald-100';
             case 'REJECTED':
@@ -37,6 +57,8 @@ const MyBookings = () => {
     };
 
     const renderSchedule = (start, end) => {
+        if (!start || !end) return <span className="text-xs text-slate-400">TBD</span>;
+        
         const startDate = new Date(start);
         const endDate = new Date(end);
         const isSameDay = startDate.toDateString() === endDate.toDateString();
@@ -66,7 +88,7 @@ const MyBookings = () => {
 
     return (
         <div className="max-w-5xl mx-auto p-8 animate-in fade-in duration-700">
-            {/* Header Area */}
+            {/* Header */}
             <div className="flex justify-between items-center mb-12">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
@@ -83,7 +105,7 @@ const MyBookings = () => {
                 </div>
             </div>
 
-            {/* Content Area */}
+            {/* List */}
             <div className="space-y-3">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24">
@@ -93,14 +115,13 @@ const MyBookings = () => {
                 ) : bookings.length > 0 ? (
                     bookings.map((booking) => (
                         <div key={booking.id} className="group bg-white border border-slate-100 rounded-2xl p-4 flex flex-col md:flex-row items-center gap-6 hover:shadow-md hover:border-indigo-100 transition-all">
-                            {/* Left: Icon & Title */}
                             <div className="flex items-center gap-4 flex-1">
                                 <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
                                     <Calendar size={20} />
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                                        {booking.resourceId}
+                                        Resource ID: {booking.resourceId}
                                     </h3>
                                     <p className="text-xs text-slate-400 line-clamp-1 italic">
                                         {booking.purpose || 'No purpose defined'}
@@ -108,22 +129,19 @@ const MyBookings = () => {
                                 </div>
                             </div>
 
-                            {/* Middle: Schedule */}
                             <div className="flex-1 md:border-l border-slate-50 md:pl-6">
                                 <p className="text-[10px] uppercase tracking-wider font-bold text-slate-300 mb-1">Schedule</p>
                                 {renderSchedule(booking.startTime, booking.endTime)}
                             </div>
 
-                            {/* Middle: Capacity */}
                             <div className="hidden lg:block px-6 border-l border-slate-50">
-                                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-300 mb-1">Group</p>
+                                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-300 mb-1">Group Size</p>
                                 <div className="flex items-center gap-1.5 text-slate-600 font-semibold text-sm">
                                     <Users size={14} className="text-slate-300" />
-                                    {booking.expectedAttendees}
+                                    {booking.expectedAttendees || 0}
                                 </div>
                             </div>
 
-                            {/* Right: Status */}
                             <div className="flex items-center gap-4 md:pl-6 md:border-l border-slate-50">
                                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusStyles(booking.status)}`}>
                                     {booking.status || 'PENDING'}
