@@ -13,6 +13,9 @@ import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoute from "../components/ProtectedRoute";
+import BookingRequest from "../pages/BookingRequest";
+import MyBookings from "../pages/MyBookings";
+import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 
 // BOOKING IMPORTS
 import MyBookings from "../pages/MyBookings";

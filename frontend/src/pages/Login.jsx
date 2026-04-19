@@ -213,7 +213,7 @@ export default function Login() {
               <button
                 onClick={() =>
                   (window.location.href =
-                    "http://localhost:8080/oauth2/authorization/google")
+                    "http://localhost:8081/oauth2/authorization/google")
                 }
                 className="w-full bg-white border border-slate-200 text-slate-700 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-3 hover:bg-slate-50 transition-all shadow-sm"
               >
