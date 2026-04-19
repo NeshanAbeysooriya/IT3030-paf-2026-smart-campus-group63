@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import GoogleSuccess from "../pages/GoogleSuccess";
 import AdminPage from "../pages/admin";
 import AboutUs from "../pages/aboutUs";
+import AssetList from "../pages/AssetList";
 import UserDashboard from "../pages/userDashboard";
 import Overview from "../pages/userOverview";
 import UserSettings from "../pages/userSetting";
@@ -33,6 +34,7 @@ export default function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/assets" element={<AssetList />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/bookings" element={<BookingRequest />} />
 

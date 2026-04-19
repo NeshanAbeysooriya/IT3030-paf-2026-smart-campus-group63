@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
-import { getAllAssets, createAsset, updateAsset, deleteAsset, updateAssetStatus } from '../api/assetApi';
+import { getAllAssets, searchAssets, createAsset, updateAsset, deleteAsset, updateAssetStatus } from '../api/assetApi';
 
 // Initial state
 const initialState = {
@@ -111,6 +111,16 @@ export function AssetProvider({ children }) {
     }
   };
 
+  const fetchActiveAssets = async () => {
+    dispatch({ type: ACTIONS.SET_LOADING, payload: true });
+    try {
+      const data = await searchAssets({ status: 'ACTIVE' });
+      dispatch({ type: ACTIONS.SET_ASSETS, payload: data });
+    } catch (error) {
+      dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
+    }
+  };
+
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
@@ -124,8 +134,8 @@ export function AssetProvider({ children }) {
             const wsMessage = JSON.parse(message.body);
             console.log('Received WebSocket message:', wsMessage);
 
-            // Refresh the asset list when any change occurs
-            fetchAssets();
+            // Refresh the active asset list when any change occurs
+            fetchActiveAssets();
           });
         },
         onStompError: (frame) => {
@@ -228,6 +238,7 @@ export function AssetProvider({ children }) {
 
     // Actions
     fetchAssets,
+    fetchActiveAssets,
     setFilters,
     resetFilters,
     createAsset: createNewAsset,
