@@ -52,6 +52,7 @@ export default function Footer() {
             <h4 className="text-white font-bold text-xs uppercase tracking-[0.2em] mb-8">Organization</h4>
             <ul className="space-y-4">
               <FooterLink to="/about">About Hub</FooterLink>
+              <FooterLink to="/contact">Contact Us</FooterLink>
               <FooterLink to="/team">Admin Team</FooterLink>
               <FooterLink to="/security">Security</FooterLink>
               <FooterLink to="/docs">Documentation</FooterLink>
