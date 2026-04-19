@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useRef, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { getAllAssets, searchAssets, createAsset, updateAsset, deleteAsset, updateAssetStatus } from '../api/assetApi';
@@ -102,7 +102,7 @@ export function AssetProvider({ children }) {
   const stompClientRef = useRef(null);
 
   // Actions
-  const fetchAssets = async (page = state.pagination.page, size = state.pagination.size) => {
+  const fetchAssets = useCallback(async (page = state.pagination.page, size = state.pagination.size) => {
     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
     try {
       const data = await getAllAssets(page, size);
@@ -110,9 +110,9 @@ export function AssetProvider({ children }) {
     } catch (error) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     }
-  };
+  }, [dispatch, state.pagination.page, state.pagination.size]);
 
-  const fetchActiveAssets = async () => {
+  const fetchActiveAssets = useCallback(async () => {
     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
     try {
       const data = await searchAssets({ status: 'ACTIVE' });
@@ -120,7 +120,7 @@ export function AssetProvider({ children }) {
     } catch (error) {
       dispatch({ type: ACTIONS.SET_ERROR, payload: error.message });
     }
-  };
+  }, [dispatch]);
 
   // WebSocket connection
   useEffect(() => {

@@ -167,3 +167,4 @@ public class BookingService {
     public List<Booking> getBookingsByResourceId(Long resourceId) {
         return bookingRepository.findByResourceId(resourceId);
     }
+}
