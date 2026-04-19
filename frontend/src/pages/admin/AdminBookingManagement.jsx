@@ -15,7 +15,8 @@ import {
   MessageSquare,
   ShieldCheck,
   ShieldAlert,
-  Filter
+  Filter,
+  AlertCircle
 } from 'lucide-react';
 
 const AdminBookingManagement = () => {
@@ -86,6 +87,7 @@ const AdminBookingManagement = () => {
                                 <option value="PENDING">Pending</option>
                                 <option value="APPROVED">Approved</option>
                                 <option value="REJECTED">Rejected</option>
+                                <option value="CANCELLED">Cancelled</option>
                             </select>
                         </div>
 
@@ -139,7 +141,9 @@ const AdminBookingManagement = () => {
                                         <td className="px-10 py-7 text-center">
                                             <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase border-2 ${
                                                 b.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
-                                                b.status === 'REJECTED' ? 'bg-rose-50 text-rose-600 border-rose-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                                                b.status === 'REJECTED' ? 'bg-rose-50 text-rose-600 border-rose-100' : 
+                                                b.status === 'CANCELLED' ? 'bg-orange-50 text-orange-600 border-orange-100' : 
+                                                'bg-amber-50 text-amber-600 border-amber-100'
                                             }`}>
                                                 {b.status}
                                             </span>
@@ -171,7 +175,7 @@ const AdminBookingManagement = () => {
                 </div>
             </div>
 
-            {/* Modal Logic remains unchanged to preserve existing functionality */}
+            {/* Modal Logic */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex justify-center items-center p-4">
                     <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
@@ -188,11 +192,13 @@ const AdminBookingManagement = () => {
                             <div className="space-y-4 mb-8">
                                 {selectedBooking.status !== 'PENDING' && (
                                     <div className="flex justify-between items-center px-1">
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Audit Details</span>
+                                        {/* <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Audit Details</span> */}
                                         <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border flex items-center gap-1.5 ${
                                             selectedBooking.status === 'APPROVED' 
                                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                                            : 'bg-rose-50 text-rose-600 border-rose-100'
+                                            : selectedBooking.status === 'REJECTED' 
+                                            ? 'bg-rose-50 text-rose-600 border-rose-100'
+                                            : 'bg-orange-50 text-orange-600 border-orange-100'
                                         }`}>
                                             {selectedBooking.status === 'APPROVED' ? <ShieldCheck size={10}/> : <ShieldAlert size={10}/>}
                                             {selectedBooking.status}
@@ -224,7 +230,7 @@ const AdminBookingManagement = () => {
                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Purpose</span>
                                         </div>
                                         <p className="text-sm font-bold text-slate-600 leading-relaxed">
-                                            {selectedBooking.purpose || "Testing Admin Approval"}
+                                            {selectedBooking.purpose || "No purpose defined"}
                                         </p>
                                     </div>
 
@@ -233,8 +239,21 @@ const AdminBookingManagement = () => {
                                             <Users size={12} className="text-indigo-400"/>
                                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expected Attendees</span>
                                         </div>
-                                        <p className="text-sm font-black text-slate-700">{selectedBooking.expectedAttendees || "5"} People</p>
+                                        <p className="text-sm font-black text-slate-700">{selectedBooking.expectedAttendees || "0"} People</p>
                                     </div>
+
+                                    {/* Added Rejection Reason for View Details mode */}
+                                    {selectedBooking.status === 'REJECTED' && (
+                                        <div className="p-4 bg-rose-50/50 rounded-2xl border border-rose-100">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <AlertCircle size={12} className="text-rose-400"/>
+                                                <span className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Rejection Reason</span>
+                                            </div>
+                                            <p className="text-sm font-bold text-rose-700 leading-relaxed italic">
+                                                "{selectedBooking.rejectionReason || "No specific reason provided."}"
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {selectedBooking.status === 'PENDING' && (

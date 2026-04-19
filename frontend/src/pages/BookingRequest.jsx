@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { createBooking, checkConflict } from '../api/bookingService'; // ✅ Added checkConflict
+import { useLocation, useNavigate } from 'react-router-dom';
+import { createBooking, checkConflict } from '../api/bookingService'; 
 import { toast } from 'react-hot-toast';
 import { 
     Calendar, Users, FileText, Clock, MapPin, 
     Loader2, CheckCircle2, ArrowRight, Info, ChevronRight,
-    ShieldCheck, AlertTriangle // ✅ Added Alert icon
+    ShieldCheck, AlertTriangle 
 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const BookingRequest = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    const [conflict, setConflict] = useState(false); // ✅ Conflict state
+    const [conflict, setConflict] = useState(false); 
     
+    // ✅ Get today's date in YYYY-MM-DD format for validation
+    const today = new Date().toISOString().split('T')[0];
+
     const queryParams = new URLSearchParams(location.search);
     const initialResourceId = queryParams.get('resourceId') || '';
 
@@ -36,12 +40,20 @@ const BookingRequest = () => {
     }
 
     useEffect(() => {
+        if (isSuccess) {
+            const timer = setTimeout(() => {
+                navigate('/dashboard/mybookings');
+            }, 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [isSuccess, navigate]);
+
+    useEffect(() => {
         if (initialResourceId) {
             setFormData(prev => ({ ...prev, resourceId: initialResourceId }));
         }
     }, [initialResourceId]);
 
-    // ✅ Real-time Conflict Checker Logic
     useEffect(() => {
         const validateConflict = async () => {
             if (formData.resourceId && formData.startDate && formData.endDate) {
@@ -50,20 +62,25 @@ const BookingRequest = () => {
                 
                 try {
                     const res = await checkConflict(formData.resourceId, startFull, endFull);
-                    setConflict(res.data); // data is true/false from backend
+                    setConflict(res.data); 
                 } catch (err) {
                     console.error("Conflict check failed", err);
                 }
             }
         };
 
-        const timer = setTimeout(validateConflict, 500); // Debounce for performance
+        const timer = setTimeout(validateConflict, 500); 
         return () => clearTimeout(timer);
     }, [formData.resourceId, formData.startDate, formData.startTime, formData.endDate, formData.endTime]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        // ✅ Validation: Check if date is in the past
+        if (formData.startDate < today) {
+            return toast.error("You cannot book a date in the past.");
+        }
+
         if (conflict) {
             return toast.error("Please resolve the scheduling conflict before submitting.");
         }
@@ -86,7 +103,6 @@ const BookingRequest = () => {
             setIsSuccess(true); 
             toast.success("Booking submitted!");
         } catch (error) {
-            // Displays 409 Conflict message from backend
             const msg = error.response?.data?.message || "Scheduling conflict!";
             toast.error(msg);
         } finally {
@@ -102,9 +118,15 @@ const BookingRequest = () => {
                         <CheckCircle2 size={40} className="text-emerald-600" />
                     </div>
                     <h2 className="text-2xl font-bold text-slate-900 mb-2">Request Received</h2>
-                    <p className="text-slate-500 mb-8 leading-relaxed">
+                    <p className="text-slate-500 mb-6 leading-relaxed">
                         Your request for <span className="font-semibold text-indigo-600">{formData.resourceId}</span> has been sent to the administrator.
                     </p>
+                    
+                    <div className="flex items-center justify-center gap-2 text-xs text-slate-400 font-medium mb-8">
+                        <Loader2 size={14} className="animate-spin text-indigo-500" />
+                        Redirecting to your bookings dashboard...
+                    </div>
+
                     <button 
                         onClick={() => {
                             setIsSuccess(false);
@@ -182,6 +204,7 @@ const BookingRequest = () => {
                                 <div className="flex flex-col sm:flex-row gap-3">
                                     <input 
                                         type="date" required 
+                                        min={today} // ✅ Prevents selecting past dates in browser
                                         className="flex-[2] bg-white border border-slate-200 p-2.5 rounded-lg outline-none focus:border-indigo-500 transition-colors font-semibold text-slate-700 text-sm"
                                         value={formData.startDate}
                                         onChange={(e) => setFormData({...formData, startDate: e.target.value, endDate: e.target.value})}
@@ -201,6 +224,7 @@ const BookingRequest = () => {
                                 <div className="flex flex-col sm:flex-row gap-3">
                                     <input 
                                         type="date" required 
+                                        min={formData.startDate || today} // ✅ Ensures end date isn't before start date
                                         className="flex-[2] bg-white border border-slate-200 p-2.5 rounded-lg outline-none focus:border-indigo-500 transition-colors font-semibold text-slate-700 text-sm"
                                         value={formData.endDate}
                                         onChange={(e) => setFormData({...formData, endDate: e.target.value})}
@@ -216,7 +240,6 @@ const BookingRequest = () => {
                             </div>
                         </div>
 
-                        {/* ✅ UI WARNING: Conflict Warning Message */}
                         {conflict && (
                             <div className="flex items-center gap-3 text-rose-700 bg-rose-50 border border-rose-100 p-4 rounded-2xl text-sm font-bold animate-pulse">
                                 <AlertTriangle size={20} /> This resource is already booked for this time. Please choose another slot.
@@ -249,7 +272,7 @@ const BookingRequest = () => {
                 <div className="flex flex-col items-center gap-3 pt-2">
                     <button 
                         type="submit" 
-                        disabled={loading || conflict} // ✅ Disable if conflict exists
+                        disabled={loading || conflict} 
                         className="group w-full md:w-2/3 py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 disabled:bg-slate-300 transition-all shadow-lg shadow-indigo-200 flex items-center justify-center gap-2 text-base"
                     >
                         {loading ? <Loader2 className="animate-spin" size={20} /> : (
