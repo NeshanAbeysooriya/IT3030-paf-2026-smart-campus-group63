@@ -36,6 +36,6 @@ public class FileUploadController {
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
         // return URL
-        return "http://localhost:8080/uploads/" + fileName;
+        return "http://localhost:8081/uploads/" + fileName;
     }
 }

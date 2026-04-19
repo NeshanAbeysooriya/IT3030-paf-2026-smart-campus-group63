@@ -26,6 +26,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             HttpServletResponse response,
             Authentication authentication)
             throws IOException {
+                
 
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
 
@@ -63,7 +64,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 java.nio.charset.StandardCharsets.UTF_8);
 
         response.sendRedirect(
-                "http://localhost:5174/login-success" +
+                "http://localhost:5173/login-success" +
                         "?token=" + token +
                         "&name=" + name +
                         "&email=" + email +
