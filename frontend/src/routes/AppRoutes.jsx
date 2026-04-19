@@ -23,6 +23,9 @@ import MyBookings from "../pages/MyBookings";
 import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 import BookingRequest from "../pages/BookingRequest";
 
+// CONTACT US IMPORT
+import ContactUs from "../pages/ContactUs";
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -36,6 +39,7 @@ export default function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<ContactUs />} />
         <Route path="/assets" element={<AssetsPage />} />
         <Route path="/assets/:id" element={<AssetDetail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
