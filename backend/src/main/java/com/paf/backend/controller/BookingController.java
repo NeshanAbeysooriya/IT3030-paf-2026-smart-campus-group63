@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -17,9 +18,31 @@ public class BookingController {
     private BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
-        Booking created = bookingService.requestBooking(booking);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    public ResponseEntity<?> createBooking(@RequestBody Booking booking) {
+        try {
+            Booking created = bookingService.requestBooking(booking);
+            return new ResponseEntity<>(created, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            // Returns 409 Conflict if the Service throws a conflict exception
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    // ✅ NEW: Endpoint for real-time conflict checking
+    @GetMapping("/check-conflicts")
+    public ResponseEntity<Boolean> checkConflicts(
+            @RequestParam Long resourceId,
+            @RequestParam String startTime,
+            @RequestParam String endTime) {
+        
+        // We reuse your service logic to see if APPROVED bookings exist for this slot
+        boolean hasConflict = bookingService.getAllBookings().stream()
+            .anyMatch(b -> b.getResourceId().equals(resourceId) && 
+                      "APPROVED".equals(b.getStatus().toString()) &&
+                      !(startTime.compareTo(b.getEndTime().toString()) >= 0 || 
+                        endTime.compareTo(b.getStartTime().toString()) <= 0));
+        
+        return ResponseEntity.ok(hasConflict);
     }
 
     @GetMapping("/user/{userId}")
@@ -37,10 +60,6 @@ public class BookingController {
         return ResponseEntity.ok(updated);
     }
 
-    /**
-     * FULLY COMPLETE CANCELLATION ENDPOINT
-     * Requirement: Users can cancel their own bookings.
-     */
     @PutMapping("/{id}/cancel")
     public ResponseEntity<Booking> cancelBooking(@PathVariable("id") Long id) {
         Booking cancelled = bookingService.cancelBooking(id);
