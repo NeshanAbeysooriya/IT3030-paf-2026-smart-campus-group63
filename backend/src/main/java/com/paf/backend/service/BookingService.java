@@ -3,10 +3,16 @@ package com.paf.backend.service;
 import com.paf.backend.exception.BookingConflictException;
 import com.paf.backend.model.Booking;
 import com.paf.backend.model.BookingStatus;
+import com.paf.backend.model.User;
 import com.paf.backend.repository.BookingRepository;
+import com.paf.backend.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class BookingService {
@@ -14,11 +20,29 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
 
-    // FIX 1: Added @Autowired to prevent NullPointerException
-    @Autowired
+    @Autowired // ✅ FIX: inject service
     private NotificationService notificationService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public Booking requestBooking(Booking booking) {
+
+        
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String email = auth.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        booking.setUser(user); // ✅ FIX HERE
+
+
+
+
+
         List<Booking> conflicts = bookingRepository.findOverlappingBookings(
                 booking.getResourceId(), booking.getStartTime(), booking.getEndTime());
 
@@ -31,7 +55,19 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.PENDING);
-        return bookingRepository.save(booking);
+
+        Booking savedBooking = bookingRepository.save(booking);
+
+        // =========================
+        // ✅ NOTIFICATION ADDED
+        // =========================
+        if (booking.getUser() != null && booking.getUser().getEmail() != null) {
+            notificationService.createNotificationByEmail(
+                    booking.getUser().getEmail(),
+                    "Your booking request is submitted and is PENDING approval.");
+        }
+
+        return savedBooking;
     }
 
     public Booking updateStatus(Long id, String status, String reason) {
@@ -63,8 +99,25 @@ public class BookingService {
 
         Booking updatedBooking = bookingRepository.save(booking);
 
-        // FUTURE ENHANCEMENT: Trigger notification here
-        // notificationService.sendNotification(updatedBooking);
+        // =========================
+        // ✅ NOTIFICATION ADDED
+        // =========================
+        if (booking.getUser() != null && booking.getUser().getEmail() != null) {
+
+            String message;
+
+            if (newStatus == BookingStatus.APPROVED) {
+                message = "Your booking has been APPROVED ✅";
+            } else if (newStatus == BookingStatus.REJECTED) {
+                message = "Your booking was REJECTED ❌ Reason: " + reason;
+            } else {
+                message = "Your booking status updated to " + newStatus;
+            }
+
+            notificationService.createNotificationByEmail(
+                    booking.getUser().getEmail(),
+                    message);
+        }
 
         return updatedBooking;
     }
@@ -73,7 +126,6 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        // Strict workflow rules
         if (booking.getStatus() == BookingStatus.REJECTED) {
             throw new RuntimeException("Cannot cancel a booking that has already been rejected.");
         }
@@ -83,7 +135,18 @@ public class BookingService {
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
-        return bookingRepository.save(booking);
+        Booking updatedBooking = bookingRepository.save(booking);
+
+        // =========================
+        // ✅ ADD NOTIFICATION HERE
+        // =========================
+        if (booking.getUser() != null && booking.getUser().getEmail() != null) {
+            notificationService.createNotificationByEmail(
+                    booking.getUser().getEmail(),
+                    "Your booking has been CANCELLED ❌");
+        }
+
+        return updatedBooking;
     }
 
     public List<Booking> getAllBookings() {

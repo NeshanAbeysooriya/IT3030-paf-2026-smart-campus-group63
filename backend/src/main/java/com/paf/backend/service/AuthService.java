@@ -1,7 +1,5 @@
 package com.paf.backend.service;
 
-
-
 import com.paf.backend.dto.AuthResponse;
 import com.paf.backend.model.*;
 import com.paf.backend.repository.UserRepository;
@@ -38,6 +36,8 @@ public class AuthService {
 
         if (email.equals("admin@gmail.com")) {
             user.setRole(Role.ADMIN);
+        } else if (email.equals("tech@gmail.com")) {
+            user.setRole(Role.TECHNICIAN);
         } else {
             user.setRole(Role.USER);
         }
@@ -72,4 +72,3 @@ public class AuthService {
                 user.getEmail());
     }
 }
-

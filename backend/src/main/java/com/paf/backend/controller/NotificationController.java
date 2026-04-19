@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController // REST controller define karanva, notification related API endpoints define karanva, etc.
 @RequestMapping("/api/notifications")
 @CrossOrigin
 public class NotificationController {
@@ -17,12 +17,12 @@ public class NotificationController {
         this.service = service;
     }
 
-    @PutMapping("/read/{id}")
-    public void markRead(@PathVariable Long id) {
+    @PutMapping("/read/{id}") // mark notification read
+    public void markRead(@PathVariable Long id) { // path variable ekem ena id ek aragen e id ekt adalv mark kafranva
         service.markAsRead(id);
     }
 
-    @PostMapping("/test")
+    @PostMapping("/test")// test notification craete
     public String testNotification() {
         service.createNotificationByEmail(
                 "kalanika@my.sliit.lk",
@@ -42,7 +42,7 @@ public class NotificationController {
         return "created";
     }
 
-    @GetMapping("/email/{email}")
+    @GetMapping("/email/{email}")// adala email ekem notification list ek gannva
     public List<Notification> getByEmail(@PathVariable String email) {
         return service.getNotificationsByEmail(email);
     }

@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+    public void addResourceHandlers(ResourceHandlerRegistry registry) { // static resources serve karanva, onam URL pattern ekk aane nam, onam directory ekk thiyenva
+        registry.addResourceHandler("/uploads/**") // URL ek match vena path request handle karanava
+                .addResourceLocations("file:uploads/"); // real folder path ek define karanva
     }
 
     // ADDED THIS METHOD TO ALLOW CORS GLOBALLY
