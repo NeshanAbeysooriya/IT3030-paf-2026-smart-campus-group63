@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FaSearch, FaThLarge, FaList, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useAssets } from '../contexts/AssetContext';
 import AssetCard from '../components/AssetCard';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const assetTypes = [
   { value: '', label: 'All Types' },
@@ -61,9 +63,11 @@ const AssetList = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <div className="mb-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <>
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 pt-28 pb-10">
+        <div className="mb-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <h1 className="text-3xl font-semibold text-secondary">Campus Assets</h1>
             <p className="mt-2 text-sm text-slate-500 max-w-2xl">
@@ -225,7 +229,9 @@ const AssetList = () => {
           </div>
         </div>
       )}
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 };
 
