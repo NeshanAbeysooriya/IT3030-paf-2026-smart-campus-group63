@@ -10,6 +10,7 @@ import UserDashboard from "../pages/userDashboard";
 import Overview from "../pages/userOverview";
 import UserSettings from "../pages/userSetting";
 import AdminDashboard from "../pages/admin/adminDashboard";
+import AdminAssets from "../pages/admin/AdminAssets";
 import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -78,7 +79,7 @@ export default function AppRoutes() {
           />
           <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
-          <Route path="assest" element={<h1>Assets</h1>} />
+          <Route path="assest" element={<AdminAssets />} />
         </Route>
 
         {/* CATCH-ALL: Redirect any unknown URL to login */}
