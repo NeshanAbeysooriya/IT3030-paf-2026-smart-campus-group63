@@ -36,6 +36,7 @@ export default function AppRoutes() {
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/bookings" element={<BookingRequest />} />
 
         {/* USER DASHBOARD ROUTES (Nested) */}
         <Route
@@ -51,13 +52,12 @@ export default function AppRoutes() {
           
           <Route path="overview" element={<Overview />} />
           
-          {/* This matches /dashboard/request-booking */}
-          <Route path="request-booking" element={<BookingRequest />} />
+          
           
           {/* This matches /dashboard/bookings */}
-          <Route path="bookings" element={<MyBookings />} />
+          <Route path="mybookings" element={<MyBookings />} />
           
-          <Route path="tickets" element={<h1>Support Tickets</h1>} />
+          <Route path="mytickets" element={<h1>Support Tickets</h1>} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
@@ -84,6 +84,9 @@ export default function AppRoutes() {
 
         {/* CATCH-ALL: Redirect any unknown URL to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
+       
+        
+
       </Routes>
     </BrowserRouter>
   );

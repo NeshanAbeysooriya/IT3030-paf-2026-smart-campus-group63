@@ -16,7 +16,7 @@ const UserDashboard = () => {
 
   const menuItems = [
     { id: 'Overview', path: '/dashboard/overview', icon: <LayoutDashboard size={19} /> },
-    { id: 'My Bookings', path: '/dashboard/bookings', icon: <CalendarClock size={19} /> },
+    { id: 'My Bookings', path: '/dashboard/mybookings', icon: <CalendarClock size={19} /> },
     { id: 'Support Tickets', path: '/dashboard/tickets', icon: <Ticket size={19} /> },
     { id: 'Security & Profile', path: '/dashboard/settings', icon: <Settings size={19} /> },
   ];

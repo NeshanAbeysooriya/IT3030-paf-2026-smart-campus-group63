@@ -37,11 +37,11 @@ export default function Header() {
             </Link>
             
             {/* UPDATED: Points to the Request Form now */}
-            <Link to="/dashboard/request-booking" className="hover:text-indigo-600">
+            <Link to="/bookings" className="hover:text-indigo-600">
               Bookings
             </Link>
             
-            <Link to="/dashboard/tickets" className="hover:text-indigo-600">
+            <Link to="/tickets" className="hover:text-indigo-600">
               Ticket
             </Link>
           </nav>
