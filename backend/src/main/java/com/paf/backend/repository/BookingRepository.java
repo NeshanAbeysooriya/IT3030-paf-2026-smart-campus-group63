@@ -19,4 +19,6 @@ List<Booking> findOverlappingBookings(
         @Param("end") LocalDateTime end);
 
     List<Booking> findByUserId(Long userId);
+
+    List<Booking> findByResourceId(Long resourceId);
 }

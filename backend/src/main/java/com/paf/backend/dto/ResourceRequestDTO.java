@@ -37,4 +37,6 @@ public class ResourceRequestDTO {
 
     @NotNull(message = "Availability end time is required")
     private LocalTime availabilityWindowEnd;
+
+    private String description;
 }
