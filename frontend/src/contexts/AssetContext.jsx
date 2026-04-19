@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import { getAllAssets, searchAssets, createAsset, updateAsset, deleteAsset, updateAssetStatus } from '../api/assetApi';
 
 // Initial state
@@ -125,8 +126,8 @@ export function AssetProvider({ children }) {
   useEffect(() => {
     const connectWebSocket = () => {
       const client = new Client({
-        brokerURL: 'ws://localhost:8081/ws/websocket',
         reconnectDelay: 5000,
+        webSocketFactory: () => new SockJS('http://localhost:8081/ws'),
         onConnect: () => {
           console.log('Connected to WebSocket');
 

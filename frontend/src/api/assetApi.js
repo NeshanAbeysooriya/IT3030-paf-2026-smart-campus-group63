@@ -110,3 +110,27 @@ export const getAdminStats = async () => {
         throw error;
     }
 };
+
+export const checkAssetAvailability = async (id, startTime, endTime) => {
+    try {
+        const response = await axiosInstance.get(`${BASE_PATH}/${id}/check-availability`, {
+            params: { startTime, endTime }
+        });
+        return response.data;
+    } catch (error) {
+        const msg = error.response?.data?.message || "Failed to check availability";
+        toast.error(msg);
+        throw error;
+    }
+};
+
+export const getAssetBookings = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/api/bookings/resource/${id}`);
+        return response.data;
+    } catch (error) {
+        const msg = error.response?.data?.message || "Failed to fetch asset bookings";
+        toast.error(msg);
+        throw error;
+    }
+};

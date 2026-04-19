@@ -40,7 +40,7 @@ export default function AdminPage() {
           <SidebarTab to="/admin/dashboard" label="Dashboard" />
           <SidebarTab to="/admin/user_management" label="User Management" />
           <SidebarTab to="/admin/booking" label="Booking Management" />
-          <SidebarTab to="/admin/assest" label="Assets Management" />
+          <SidebarTab to="/admin/assets" label="Assets Management" />
           <SidebarTab to="/admin/ticket" label="Ticket Management" />
         </nav>
 

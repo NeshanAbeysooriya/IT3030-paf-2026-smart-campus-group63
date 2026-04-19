@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAssets } from "../../contexts/AssetContext";
 import {
@@ -15,6 +16,7 @@ import {
   Slash,
   Circle,
 } from "lucide-react";
+import AssetFormModal from "../../components/AssetFormModal";
 
 const typeLabels = {
   LECTURE_HALL: "Lecture Hall",
@@ -46,6 +48,8 @@ const AdminAssets = () => {
     updateAssetStatus,
   } = useAssets();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [stats, setStats] = useState({
     totalResources: 0,
     countByType: {},
@@ -64,15 +68,6 @@ const AdminAssets = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
-  const [formValues, setFormValues] = useState({
-    name: "",
-    type: "LECTURE_HALL",
-    status: "ACTIVE",
-    capacity: "",
-    location: "",
-    availabilityWindowStart: "08:00",
-    availabilityWindowEnd: "17:00",
-  });
 
   const loadStats = async () => {
     setStatsLoading(true);
@@ -107,6 +102,19 @@ const AdminAssets = () => {
     loadAssets(0, size);
   }, []);
 
+  // Handle URL parameters for editing
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (editId && assets.length > 0) {
+      const assetToEdit = assets.find(asset => asset.id === parseInt(editId));
+      if (assetToEdit) {
+        handleOpenEdit(assetToEdit);
+        // Clear the URL parameter after opening the modal
+        setSearchParams({});
+      }
+    }
+  }, [searchParams, assets]);
+
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
       if (filterType && asset.type !== filterType) return false;
@@ -119,63 +127,19 @@ const AdminAssets = () => {
   const handleOpenModal = () => {
     setSelectedAsset(null);
     setIsEditMode(false);
-    setFormValues({
-      name: "",
-      type: "LECTURE_HALL",
-      status: "ACTIVE",
-      capacity: "",
-      location: "",
-      availabilityWindowStart: "08:00",
-      availabilityWindowEnd: "17:00",
-    });
     setModalOpen(true);
   };
 
   const handleOpenEdit = (asset) => {
     setSelectedAsset(asset);
     setIsEditMode(true);
-    setFormValues({
-      name: asset.name || "",
-      type: asset.type || "LECTURE_HALL",
-      status: asset.status || "ACTIVE",
-      capacity: asset.capacity?.toString() || "",
-      location: asset.location || "",
-      availabilityWindowStart: asset.availabilityWindowStart || "08:00",
-      availabilityWindowEnd: asset.availabilityWindowEnd || "17:00",
-    });
     setModalOpen(true);
   };
 
-  const handleChangeValue = (field) => (event) => {
-    setFormValues((prev) => ({ ...prev, [field]: event.target.value }));
-  };
-
-  const handleSaveAsset = async (event) => {
-    event.preventDefault();
-    const payload = {
-      name: formValues.name,
-      type: formValues.type,
-      status: formValues.status,
-      capacity: Number(formValues.capacity),
-      location: formValues.location,
-      availabilityWindowStart: formValues.availabilityWindowStart,
-      availabilityWindowEnd: formValues.availabilityWindowEnd,
-    };
-
-    try {
-      if (isEditMode && selectedAsset) {
-        await updateAsset(selectedAsset.id, payload);
-        toast.success("Asset updated successfully.");
-      } else {
-        await createAsset(payload);
-        toast.success("Asset added successfully.");
-      }
-      setModalOpen(false);
-      loadAssets(0, size);
-      loadStats();
-    } catch (error) {
-      // errors are handled in context
-    }
+  const handleSaveSuccess = async () => {
+    setModalOpen(false);
+    await loadAssets(page, size);
+    await loadStats();
   };
 
   const handleDelete = async (id) => {
@@ -447,127 +411,13 @@ const AdminAssets = () => {
         </div>
       </section>
 
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4 py-6">
-          <div className="w-full max-w-2xl rounded-[2rem] bg-white p-8 shadow-elegant">
-            <div className="flex items-center justify-between gap-4 mb-6">
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900">
-                  {isEditMode ? "Edit Asset" : "Add New Asset"}
-                </h3>
-                <p className="text-sm text-slate-500">
-                  {isEditMode ? "Update the existing asset details." : "Create a new resource for the campus."}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="rounded-full p-2 text-slate-500 hover:bg-slate-100"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveAsset} className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2 text-sm text-slate-700">
-                Name
-                <input
-                  required
-                  value={formValues.name}
-                  onChange={handleChangeValue("name")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                />
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700">
-                Type
-                <select
-                  value={formValues.type}
-                  onChange={handleChangeValue("type")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                >
-                  {Object.entries(typeLabels).map(([key, label]) => (
-                    <option key={key} value={key}>{label}</option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700">
-                Capacity
-                <input
-                  required
-                  type="number"
-                  min={1}
-                  value={formValues.capacity}
-                  onChange={handleChangeValue("capacity")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                />
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700">
-                Location
-                <input
-                  required
-                  value={formValues.location}
-                  onChange={handleChangeValue("location")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                />
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700">
-                Available from
-                <input
-                  required
-                  type="time"
-                  value={formValues.availabilityWindowStart}
-                  onChange={handleChangeValue("availabilityWindowStart")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                />
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700">
-                Available until
-                <input
-                  required
-                  type="time"
-                  value={formValues.availabilityWindowEnd}
-                  onChange={handleChangeValue("availabilityWindowEnd")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                />
-              </label>
-
-              <label className="space-y-2 text-sm text-slate-700 md:col-span-2">
-                Status
-                <select
-                  value={formValues.status}
-                  onChange={handleChangeValue("status")}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10"
-                >
-                  <option value="ACTIVE">Active</option>
-                  <option value="MAINTENANCE">Maintenance</option>
-                  <option value="OUT_OF_SERVICE">Out of Service</option>
-                </select>
-              </label>
-
-              <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white hover:bg-primary-hover"
-                >
-                  {isEditMode ? "Save Changes" : "Create Asset"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AssetFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={handleSaveSuccess}
+        asset={selectedAsset}
+        existingAssets={assets}
+      />
     </div>
   );
 };

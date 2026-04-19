@@ -11,6 +11,8 @@ import Overview from "../pages/userOverview";
 import UserSettings from "../pages/userSetting";
 import AdminDashboard from "../pages/admin/adminDashboard";
 import AdminAssets from "../pages/admin/AdminAssets";
+import AssetDetail from "../pages/AssetDetail";
+import AssetsPage from "../pages/AssetsPage";
 import AdminUserManagement from "../pages/admin/AdminUserManagement";
 import AdminUserManagementReport from "../pages/admin/AdminUserManagementReport";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -35,7 +37,8 @@ export default function AppRoutes() {
         <Route path="/home" element={<Home />} />
         <Route path="/login-success" element={<GoogleSuccess />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/assets" element={<AssetList />} />
+        <Route path="/assets" element={<AssetsPage />} />
+        <Route path="/assets/:id" element={<AssetDetail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/bookings" element={<BookingRequest />} />
 
@@ -74,7 +77,7 @@ export default function AppRoutes() {
           />
           <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
-          <Route path="assest" element={<AdminAssets />} />
+          <Route path="assets" element={<AdminAssets />} />
         </Route>
 
         <Route path="/technician" element={<TechnicianPage />}>

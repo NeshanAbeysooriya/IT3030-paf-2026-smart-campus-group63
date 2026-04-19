@@ -54,6 +54,12 @@ public class BookingController {
         return ResponseEntity.ok(userBookings);
     }
 
+    @GetMapping("/resource/{resourceId}")
+    public ResponseEntity<List<Booking>> getBookingsByResourceId(@PathVariable("resourceId") Long resourceId) {
+        List<Booking> resourceBookings = bookingService.getBookingsByResourceId(resourceId);
+        return ResponseEntity.ok(resourceBookings);
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<Booking> updateBookingStatus(
             @PathVariable("id") Long id,

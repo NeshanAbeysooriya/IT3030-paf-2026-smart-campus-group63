@@ -163,4 +163,7 @@ public class BookingService {
     public List<Booking> getBookingsByUserId(Long userId) {
         return bookingRepository.findByUserId(userId);
     }
-}
+
+    public List<Booking> getBookingsByResourceId(Long resourceId) {
+        return bookingRepository.findByResourceId(resourceId);
+    }
