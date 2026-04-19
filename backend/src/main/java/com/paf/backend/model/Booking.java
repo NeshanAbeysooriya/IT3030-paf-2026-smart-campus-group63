@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 /**
  * Member 2: Facility and Asset Booking Entity
- * This class includes validation constraints to satisfy 
+ * This class includes validation constraints to satisfy
  * the 'Standard Naming and Validation' rubric requirements.
  */
 @Entity
@@ -25,7 +25,7 @@ public class Booking {
     private Long resourceId; // Linked to Member 1's Resource/Asset
 
     @NotNull(message = "User identification is required")
-    @Column(nullable = false)
+    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
     private Long userId; // Linked to the authenticated user
 
     @NotNull(message = "Start time is required")
@@ -38,7 +38,7 @@ public class Booking {
     private LocalDateTime endTime;
 
     private String purpose;
-    
+
     private Integer expectedAttendees;
 
     @Enumerated(EnumType.STRING)
@@ -46,4 +46,11 @@ public class Booking {
     private BookingStatus status = BookingStatus.PENDING; // Initial state in workflow
 
     private String rejectionReason; // Required for Admin Review auditability
+
+    // *******************Notification part**************** */
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }
