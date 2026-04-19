@@ -1,48 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { 
     Calendar, Clock, Users, ChevronRight, 
     ArrowRight, LayoutGrid, Inbox, Loader2 
 } from 'lucide-react';
+// ✅ Import the services you created
+import { getUserBookings, cancelUserBooking } from '../api/bookingService'
 
 const MyBookings = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const fetchMyBookings = async () => {
+        try {
+            const userId = 1; // Recommendation: Replace with dynamic ID from Auth context later
+            setLoading(true);
+            
+            // ✅ Using your service file logic instead of raw axios
+            const response = await getUserBookings(userId);
+            setBookings(response.data);
+        } catch (error) {
+            console.error("Fetch error details:", error.response?.data || error.message);
+            toast.error("Unable to sync with server");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchMyBookings = async () => {
-            try {
-                // 1. Setup identifying data
-                const userId = 1; 
-                const token = localStorage.getItem('token'); 
-
-                // 2. Safety Check: If token is missing or malformed, stop here
-                if (!token || token === 'null' || token === 'undefined') {
-                    console.error("Authentication token is missing");
-                    setLoading(false);
-                    return;
-                }
-
-                // 3. API Call
-                const response = await axios.get(`http://localhost:8081/api/bookings/user/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` 
-                    }
-                });
-
-                setBookings(response.data);
-            } catch (error) {
-                // Logs detailed error to console for debugging
-                console.error("Fetch error details:", error.response?.data || error.message);
-                toast.error("Unable to sync with server");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchMyBookings();
     }, []);
+
+    // ✅ New: Handle the cancellation request
+    const handleCancel = async (id) => {
+        if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+
+        try {
+            await cancelUserBooking(id);
+            toast.success("Booking cancelled successfully");
+            fetchMyBookings(); // Refresh the list to show the 'CANCELLED' status
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || "Failed to cancel booking";
+            toast.error(errorMsg);
+        }
+    };
 
     const getStatusStyles = (status) => {
         const s = status?.toUpperCase() || 'PENDING';
@@ -51,6 +52,8 @@ const MyBookings = () => {
                 return 'bg-emerald-50 text-emerald-600 border-emerald-100';
             case 'REJECTED':
                 return 'bg-rose-50 text-rose-600 border-rose-100';
+            case 'CANCELLED': // ✅ Added style for the cancelled state
+                return 'bg-slate-100 text-slate-500 border-slate-200';
             default:
                 return 'bg-amber-50 text-amber-600 border-amber-100';
         }
@@ -146,6 +149,17 @@ const MyBookings = () => {
                                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusStyles(booking.status)}`}>
                                     {booking.status || 'PENDING'}
                                 </span>
+                                
+                                {/* ✅ CANCEL BUTTON: Only visible if status allows cancellation */}
+                                {(booking.status === 'PENDING' || booking.status === 'APPROVED') && (
+                                    <button 
+                                        onClick={() => handleCancel(booking.id)}
+                                        className="text-rose-500 hover:bg-rose-50 px-3 py-1.5 rounded-xl font-bold text-[11px] transition-colors"
+                                    >
+                                        CANCEL
+                                    </button>
+                                )}
+
                                 <button className="p-2 text-slate-300 hover:text-indigo-500 hover:bg-indigo-50 rounded-full transition-all">
                                     <ChevronRight size={20} />
                                 </button>

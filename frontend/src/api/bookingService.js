@@ -26,3 +26,7 @@ export const deleteBooking = (id) => axiosInstance.delete(`${BASE_PATH}/${id}`);
 
 // Requirement: Users can view their own bookings [cite: 194]
 export const getUserBookings = (userId) => axiosInstance.get(`${BASE_PATH}/user/${userId}`);
+
+export const cancelUserBooking = (id) => {
+    return axiosInstance.put(`${BASE_PATH}/${id}/cancel`);
+};
