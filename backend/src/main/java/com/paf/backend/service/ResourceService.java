@@ -1,11 +1,14 @@
 package com.paf.backend.service;
 
+import com.paf.backend.dto.ResourceStatsResponseDTO;
 import com.paf.backend.dto.ResourceRequestDTO;
 import com.paf.backend.dto.ResourceResponseDTO;
 import com.paf.backend.dto.ResourceWebSocketMessage;
 import com.paf.backend.model.Resource;
 import com.paf.backend.repository.ResourceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +51,7 @@ public class ResourceService {
     /**
      * Update an existing resource
      */
+    @CacheEvict(value = "resourceAvailability", allEntries = true)
     public ResourceResponseDTO update(Long id, ResourceRequestDTO requestDTO) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Resource not found with id: " + id));
@@ -69,6 +74,7 @@ public class ResourceService {
     /**
      * Soft delete - set status to OUT_OF_SERVICE
      */
+    @CacheEvict(value = "resourceAvailability", allEntries = true)
     public void delete(Long id) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Resource not found with id: " + id));
@@ -186,6 +192,7 @@ public class ResourceService {
     /**
      * Update resource status
      */
+    @CacheEvict(value = "resourceAvailability", allEntries = true)
     public ResourceResponseDTO updateStatus(Long id, Resource.ResourceStatus newStatus) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Resource not found with id: " + id));
@@ -240,6 +247,29 @@ public class ResourceService {
         LocalTime windowEnd = resource.getAvailabilityWindowEnd();
 
         return !time.isBefore(windowStart) && !time.isAfter(windowEnd);
+    }
+
+    /**
+     * Get resource statistics
+     */
+    @Transactional(readOnly = true)
+    public ResourceStatsResponseDTO getResourceStats() {
+        long totalResources = resourceRepository.count();
+
+        Map<Resource.ResourceType, Long> countByType = Map.of(
+            Resource.ResourceType.LECTURE_HALL, resourceRepository.countByType(Resource.ResourceType.LECTURE_HALL),
+            Resource.ResourceType.LAB, resourceRepository.countByType(Resource.ResourceType.LAB),
+            Resource.ResourceType.MEETING_ROOM, resourceRepository.countByType(Resource.ResourceType.MEETING_ROOM),
+            Resource.ResourceType.EQUIPMENT, resourceRepository.countByType(Resource.ResourceType.EQUIPMENT)
+        );
+
+        Map<Resource.ResourceStatus, Long> countByStatus = Map.of(
+            Resource.ResourceStatus.ACTIVE, resourceRepository.countByStatus(Resource.ResourceStatus.ACTIVE),
+            Resource.ResourceStatus.OUT_OF_SERVICE, resourceRepository.countByStatus(Resource.ResourceStatus.OUT_OF_SERVICE),
+            Resource.ResourceStatus.MAINTENANCE, resourceRepository.countByStatus(Resource.ResourceStatus.MAINTENANCE)
+        );
+
+        return new ResourceStatsResponseDTO(totalResources, countByType, countByStatus);
     }
 
     /**

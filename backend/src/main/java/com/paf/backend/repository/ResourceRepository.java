@@ -55,4 +55,14 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
      * Find all resources by status and capacity greater than or equal to the specified value
      */
     List<Resource> findByStatusAndCapacityGreaterThanEqual(Resource.ResourceStatus status, Integer capacity);
+
+    /**
+     * Count resources by type
+     */
+    long countByType(Resource.ResourceType type);
+
+    /**
+     * Count resources by status
+     */
+    long countByStatus(Resource.ResourceStatus status);
 }

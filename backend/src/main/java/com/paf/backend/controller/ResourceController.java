@@ -3,6 +3,7 @@ package com.paf.backend.controller;
 import com.paf.backend.dto.ResourceRequestDTO;
 import com.paf.backend.dto.ResourceResponseDTO;
 import com.paf.backend.model.Resource;
+import com.paf.backend.service.ResourceAvailabilityService;
 import com.paf.backend.service.ResourceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.List;
 public class ResourceController {
 
     private final ResourceService resourceService;
+    private final ResourceAvailabilityService resourceAvailabilityService;
 
     /**
      * Create a new resource (Admin only)
@@ -163,7 +165,7 @@ public class ResourceController {
             LocalTime start = LocalTime.parse(startTime);
             LocalTime end = LocalTime.parse(endTime);
 
-            boolean isAvailable = resourceService.isAvailableForTimeSlot(id, start, end);
+            boolean isAvailable = resourceAvailabilityService.isResourceAvailable(id, start, end);
             return ResponseEntity.ok(new AvailabilityCheckResponse(isAvailable));
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("not found")) {
