@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { LayoutGrid, Clock, ShieldCheck, Zap, ArrowRight, CheckCircle2, Globe, Server, UserCheck } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -151,9 +152,9 @@ const AboutPage = () => {
                 Join the growing network of users who have streamlined their academic workflows with CampusCore Hub.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="bg-white text-primary px-8 py-3 rounded-campus font-bold hover:bg-slate-100 transition-colors flex items-center justify-center gap-2">
+                <Link to="/assets" className="bg-white text-primary px-8 py-3 rounded-campus font-bold hover:bg-slate-100 transition-colors flex items-center justify-center gap-2">
                   Explore Catalogue <ArrowRight size={18} />
-                </button>
+                </Link>
               </div>
             </div>
           </div>
