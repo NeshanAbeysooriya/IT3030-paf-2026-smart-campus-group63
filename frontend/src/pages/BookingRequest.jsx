@@ -7,6 +7,8 @@ import {
     Loader2, CheckCircle2, ArrowRight, Info, ChevronRight,
     ShieldCheck
 } from 'lucide-react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const BookingRequest = () => {
     const location = useLocation();
@@ -58,6 +60,7 @@ const BookingRequest = () => {
             setIsSuccess(true); 
             toast.success("Booking submitted!");
         } catch (error) {
+            console.log("Booking error details:", error.response?.data || error.message);
             toast.error(error.response?.data?.message || "Scheduling conflict!");
         } finally {
             setLoading(false);
@@ -90,9 +93,12 @@ const BookingRequest = () => {
     }
 
     return (
+         <>
+        <Header />
         <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            
             {/* Header Section */}
-            <div className="mb-6 text-center md:text-left">
+            <div className="mb-6 text-center md:text-left mt-20">
                 <nav className="flex items-center justify-center md:justify-start gap-2 text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">
                     <span>Portal</span> <ChevronRight size={12} /> <span>Asset Management</span> <ChevronRight size={12} /> <span className="text-indigo-600">New Request</span>
                 </nav>
@@ -229,6 +235,8 @@ const BookingRequest = () => {
                 </div>
             </form>
         </div>
+        <Footer />
+        </>
     );
 };
 

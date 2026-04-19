@@ -17,24 +17,19 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
-    // 1. POST: Create a new booking
+    // 1. POST: Create a new booking [cite: 97]
     @PostMapping
     public ResponseEntity<Booking> createBooking(@RequestBody Booking booking) {
         Booking created = bookingService.requestBooking(booking);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    /**
-     * UPDATED: Added @GetMapping without a sub-path.
-     * This ensures that when React calls "http://localhost:8081/api/bookings",
-     * it correctly triggers this method instead of a 405 error.
-     */
+    // 2. GET: Retrieve all bookings (Direct and /all) [cite: 65, 97]
     @GetMapping
     public ResponseEntity<List<Booking>> getAllBookingsDirect() {
         return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    // 2. GET: Retrieve all bookings (Explicitly for /all)
     @GetMapping("/all")
     public ResponseEntity<List<Booking>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
@@ -46,18 +41,21 @@ public class BookingController {
         return ResponseEntity.ok(userBookings);
     }
 
-    // 3. PATCH: Update status
+    /**
+     * 3. PATCH: Update status [cite: 97]
+     * Follows the PENDING -> APPROVED/REJECTED workflow requirement.
+     */
     @PatchMapping("/{id}/status")
     public ResponseEntity<Booking> updateBookingStatus(
             @PathVariable("id") Long id,
-            @RequestParam String status,
-            @RequestParam(required = false) String reason) {
+            @RequestParam(name = "status") String status,
+            @RequestParam(name = "reason", required = false) String reason) {
 
         Booking updated = bookingService.updateStatus(id, status, reason);
         return ResponseEntity.ok(updated);
     }
 
-    // 4. DELETE: Cancel/Remove a booking record
+    // 4. DELETE: Cancel/Remove a booking record [cite: 62, 97]
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(@PathVariable("id") Long id) {
         bookingService.deleteBooking(id);

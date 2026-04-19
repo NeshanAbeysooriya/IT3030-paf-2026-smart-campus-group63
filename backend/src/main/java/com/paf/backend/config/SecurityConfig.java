@@ -64,7 +64,10 @@ public class SecurityConfig {
                 CorsConfiguration config = new CorsConfiguration();
 
                 config.setAllowedOriginPatterns(List.of("http://localhost:*"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+                // ONLY ADDED "PATCH" TO THIS LIST BELOW
+                config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);
 
