@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useRef } from 'react';
-import SockJS from 'sockjs-client';
-import { Stomp } from 'stompjs';
+import { Client } from '@stomp/stompjs';
 import { getAllAssets, createAsset, updateAsset, deleteAsset, updateAssetStatus } from '../api/assetApi';
 
 // Initial state
@@ -115,32 +114,37 @@ export function AssetProvider({ children }) {
   // WebSocket connection
   useEffect(() => {
     const connectWebSocket = () => {
-      const socket = new SockJS('http://localhost:8081/ws');
-      const stompClient = Stomp.over(socket);
+      const client = new Client({
+        brokerURL: 'ws://localhost:8081/ws/websocket',
+        reconnectDelay: 5000,
+        onConnect: () => {
+          console.log('Connected to WebSocket');
 
-      stompClient.connect({}, () => {
-        console.log('Connected to WebSocket');
+          client.subscribe('/topic/resources', (message) => {
+            const wsMessage = JSON.parse(message.body);
+            console.log('Received WebSocket message:', wsMessage);
 
-        // Subscribe to resource updates
-        stompClient.subscribe('/topic/resources', (message) => {
-          const wsMessage = JSON.parse(message.body);
-          console.log('Received WebSocket message:', wsMessage);
-
-          // Refresh the asset list when any change occurs
-          fetchAssets();
-        });
-      }, (error) => {
-        console.error('STOMP error:', error);
+            // Refresh the asset list when any change occurs
+            fetchAssets();
+          });
+        },
+        onStompError: (frame) => {
+          console.error('STOMP error:', frame);
+        },
+        onWebSocketError: (event) => {
+          console.error('WebSocket error:', event);
+        }
       });
 
-      stompClientRef.current = stompClient;
+      client.activate();
+      stompClientRef.current = client;
     };
 
     connectWebSocket();
 
     return () => {
-      if (stompClientRef.current && stompClientRef.current.connected) {
-        stompClientRef.current.disconnect();
+      if (stompClientRef.current) {
+        stompClientRef.current.deactivate();
       }
     };
   }, []);
