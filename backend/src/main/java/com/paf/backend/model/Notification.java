@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 @Entity
 public class Notification {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id // primary key define karanva
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment id generate karanva
     private Long id;
 
     private String message;
@@ -15,8 +15,8 @@ public class Notification {
 
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne // many notification ekk user ekk link karanva, one user ekk multiple notification thiyenva, many to one relationship create karanva
+    @JoinColumn(name = "user_id") // notification ekt user link karanva, user_id column ekt join karanva, notification table ekt user_id column thiyenva, foreign key relationship create karanva
     private User user;
 
     @PrePersist

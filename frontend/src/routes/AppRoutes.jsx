@@ -18,6 +18,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import MyBookings from "../pages/MyBookings";
 import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 import BookingRequest from "../pages/BookingRequest";
+import TechnicianPage from "../pages/TechnicianPage";
 
 export default function AppRoutes() {
   return (
@@ -36,31 +37,25 @@ export default function AppRoutes() {
         <Route path="/bookings" element={<BookingRequest />} />
 
         {/* USER DASHBOARD ROUTES (Nested) */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["USER"]}>
-              <UserDashboard />
-            </ProtectedRoute>
-          }
-        >
+        <Route path="/dashboard" element={<UserDashboard />}>
           {/* Automatically redirect /dashboard to /dashboard/overview */}
-          <Route index element={<Navigate to="/dashboard/overview" replace />} />
-          
+          <Route
+            index
+            element={<Navigate to="/dashboard/overview" replace />}
+          />
+
           <Route path="overview" element={<Overview />} />
-          
-          
-          
+
           {/* This matches /dashboard/bookings */}
           <Route path="mybookings" element={<MyBookings />} />
-          
+
           <Route path="mytickets" element={<h1>Support Tickets</h1>} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
         {/* ADMIN ROUTES (Nested) */}
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
               <AdminPage />
@@ -79,11 +74,15 @@ export default function AppRoutes() {
           <Route path="assest" element={<h1>Assets</h1>} />
         </Route>
 
+        <Route path="/technician" element={<TechnicianPage />}>
+          <Route path="dashboard" element={<h1>Home</h1>} />
+          <Route path="jobs" element={<h1>jobs</h1>} />
+          <Route path="assigned" element={<h1>Task</h1>} />
+          <Route path="profile" element={<h1>Profile</h1>} />
+        </Route>
+
         {/* CATCH-ALL: Redirect any unknown URL to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
-       
-        
-
       </Routes>
     </BrowserRouter>
   );

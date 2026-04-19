@@ -11,8 +11,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
-// FIX: Added explicit allowed methods to include PATCH and others for full compatibility
-@CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS})
+// FIX: Added explicit allowed methods to include PATCH and others for full
+// compatibility
+@CrossOrigin(origins = "http://localhost:5173", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
+        RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class BookingController {
 
     @Autowired
@@ -35,14 +37,14 @@ public class BookingController {
             @RequestParam Long resourceId,
             @RequestParam String startTime,
             @RequestParam String endTime) {
-        
+
         // We reuse your service logic to see if APPROVED bookings exist for this slot
         boolean hasConflict = bookingService.getAllBookings().stream()
-            .anyMatch(b -> b.getResourceId().equals(resourceId) && 
-                      "APPROVED".equals(b.getStatus().toString()) &&
-                      !(startTime.compareTo(b.getEndTime().toString()) >= 0 || 
-                        endTime.compareTo(b.getStartTime().toString()) <= 0));
-        
+                .anyMatch(b -> b.getResourceId().equals(resourceId) &&
+                        "APPROVED".equals(b.getStatus().toString()) &&
+                        !(startTime.compareTo(b.getEndTime().toString()) >= 0 ||
+                                endTime.compareTo(b.getStartTime().toString()) <= 0));
+
         return ResponseEntity.ok(hasConflict);
     }
 
@@ -72,7 +74,7 @@ public class BookingController {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }
-    
+
     @GetMapping
     public ResponseEntity<List<Booking>> getAllBookingsDirect() {
         return ResponseEntity.ok(bookingService.getAllBookings());

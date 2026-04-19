@@ -5,33 +5,35 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users") // database table create karanva
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id // primary key define karanva
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto increment id generate karanva
     private Long id;
 
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true) //no duplicate email address in database
     private String email;
 
     private String password; // for normal login
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // enum type role store karanva, string format ekt store karanva
     private Role role;
 
     private String provider; // LOCAL or GOOGLE
 
     private String image;
 
-    @Column(nullable = false)
+    //nullable false - not null
+
+    @Column(nullable = false) // user active or not, false means user deactivated by admin, true means active
     private boolean isActive = true;
 
     private LocalDateTime createdAt;
 
-    @PrePersist
+    @PrePersist // entity save karanna passe execute karanva, createdAt field ekt current time set karanva
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }

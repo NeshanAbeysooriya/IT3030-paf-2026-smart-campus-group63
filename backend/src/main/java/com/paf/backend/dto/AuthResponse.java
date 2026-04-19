@@ -1,7 +1,7 @@
 package com.paf.backend.dto;
 
 
-public class AuthResponse {
+public class AuthResponse {  // login success vunam frontend eka yavan response object
     private String token;
     private String role;
     private String name;

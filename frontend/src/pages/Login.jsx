@@ -66,6 +66,8 @@ export default function Login() {
       // 🔥 ROLE BASED NAVIGATION
       if (role === "ADMIN") {
         navigate("/admin");
+      } else if (role === "TECHNICIAN") {
+        navigate("/technician");
       } else {
         navigate("/home");
       }
