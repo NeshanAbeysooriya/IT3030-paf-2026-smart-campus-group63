@@ -13,6 +13,9 @@ public class BookingService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    // FIX 1: Added @Autowired to prevent NullPointerException
+    @Autowired
     private NotificationService notificationService;
 
     public Booking requestBooking(Booking booking) {
@@ -35,7 +38,13 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
 
-        BookingStatus newStatus = BookingStatus.valueOf(status.toUpperCase());
+        // FIX 2: Added try-catch for Enum conversion to prevent 500 errors
+        BookingStatus newStatus;
+        try {
+            newStatus = BookingStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid status value provided.");
+        }
 
         if (newStatus == BookingStatus.APPROVED) {
             List<Booking> conflicts = bookingRepository.findOverlappingBookings(
@@ -51,21 +60,24 @@ public class BookingService {
 
         booking.setStatus(newStatus);
         booking.setRejectionReason(reason);
-        return bookingRepository.save(booking);
+
+        Booking updatedBooking = bookingRepository.save(booking);
+
+        // FUTURE ENHANCEMENT: Trigger notification here
+        // notificationService.sendNotification(updatedBooking);
+
+        return updatedBooking;
     }
 
-    /**
-     * FULLY COMPLETE CANCELLATION LOGIC
-     * Follows the workflow: PENDING/APPROVED -> CANCELLED
-     */
     public Booking cancelBooking(Long id) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
-        
+
+        // Strict workflow rules
         if (booking.getStatus() == BookingStatus.REJECTED) {
             throw new RuntimeException("Cannot cancel a booking that has already been rejected.");
         }
-        
+
         if (booking.getStatus() == BookingStatus.CANCELLED) {
             throw new RuntimeException("Booking is already cancelled.");
         }

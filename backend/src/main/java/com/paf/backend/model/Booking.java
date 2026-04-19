@@ -24,9 +24,13 @@ public class Booking {
     @Column(nullable = false)
     private Long resourceId; // Linked to Member 1's Resource/Asset
 
-    @NotNull(message = "User identification is required")
-    @Column(name = "user_id", insertable = false, updatable = false, nullable = false)
-    private Long userId; // Linked to the authenticated user
+    /**
+     * FIX: We keep this field so your existing code (booking.getUserId()) doesn't break.
+     * We set it to insertable = false and updatable = false because the 'user' object 
+     * below is now the primary owner of the column.
+     */
+    @Column(name = "user_id", insertable = false, updatable = false)
+    private Long userId; 
 
     @NotNull(message = "Start time is required")
     @Future(message = "Start time must be in the future")
@@ -47,10 +51,14 @@ public class Booking {
 
     private String rejectionReason; // Required for Admin Review auditability
 
-    // *******************Notification part**************** */
+    // ******************* Notification part / User Mapping **************** */
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    /**
+     * FIX: This is the primary mapping for the 'user_id' column.
+     * Added 'referencedColumnName = "id"' to ensure it maps to the correct primary key in the User table.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
 }
