@@ -4,6 +4,8 @@ import { useAssets } from "../contexts/AssetContext";
 import { checkAssetAvailability, getAssetBookings } from "../api/assetApi";
 import { ArrowLeft, Calendar, Clock, MapPin, Users, Edit, CheckCircle, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const AssetDetail = () => {
   const { id } = useParams();
@@ -125,9 +127,9 @@ const AssetDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
+    <div className="min-h-screen bg-surface">
+      <Header />
+      <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate(-1)}
@@ -230,16 +232,28 @@ const AssetDetail = () => {
             </div>
           </div>
           {availabilityCheck.available !== null && (
-            <div className={`p-4 rounded-md ${availabilityCheck.available ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-              <div className="flex items-center">
-                {availabilityCheck.available ? (
-                  <CheckCircle className="w-5 h-5 mr-2" />
-                ) : (
-                  <XCircle className="w-5 h-5 mr-2" />
-                )}
-                <span className="font-medium">
-                  {availabilityCheck.available ? "Available" : "Not Available"}
-                </span>
+            <div className="space-y-4">
+              <div className={`p-4 rounded-md ${availabilityCheck.available ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    {availabilityCheck.available ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <XCircle className="w-5 h-5" />
+                    )}
+                    <span className="font-medium">
+                      {availabilityCheck.available ? "Available" : "Not Available"}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/bookings?resourceId=${asset.id}`)}
+                    disabled={!availabilityCheck.available}
+                    className={`px-5 py-2 rounded-xl text-white font-semibold transition ${availabilityCheck.available ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
+                  >
+                    Book Now
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -273,7 +287,8 @@ const AssetDetail = () => {
             <p className="text-gray-600 text-center py-8">No upcoming bookings for this asset.</p>
           )}
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };
