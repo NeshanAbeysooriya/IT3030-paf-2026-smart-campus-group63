@@ -118,4 +118,8 @@ public class UserService {
         return "Reset link sent";
     }
 
+    public List<User> getUsersByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+
 }

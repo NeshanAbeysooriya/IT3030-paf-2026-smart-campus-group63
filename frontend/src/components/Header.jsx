@@ -41,7 +41,7 @@ export default function Header() {
               Bookings
             </Link>
             
-            <Link to="/tickets" className="hover:text-indigo-600">
+            <Link to="/dashboard/tickets" className="hover:text-indigo-600">
               Ticket
             </Link>
           </nav>
@@ -94,6 +94,16 @@ export default function Header() {
 
           {openNotif && (
             <NotificationPanel onClose={() => setOpenNotif(false)} />
+          )}
+
+          {/* Role-based Dashboard Links */}
+          {(localStorage.getItem("role") === "ADMIN" || localStorage.getItem("role") === "TECHNICIAN") && (
+            <Link 
+              to={localStorage.getItem("role") === "ADMIN" ? "/admin" : "/technician"}
+              className="px-4 py-2 bg-indigo-600/10 text-indigo-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+            >
+              Portal
+            </Link>
           )}
 
           <UserData />

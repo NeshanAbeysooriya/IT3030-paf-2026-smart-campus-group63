@@ -8,7 +8,6 @@ import java.util.List;
 
 @RestController // REST controller define karanva, notification related API endpoints define karanva, etc.
 @RequestMapping("/api/notifications")
-@CrossOrigin
 public class NotificationController {
 
     private final NotificationService service;

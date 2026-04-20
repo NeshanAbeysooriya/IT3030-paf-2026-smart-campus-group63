@@ -11,10 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
-// FIX: Added explicit allowed methods to include PATCH and others for full
-// compatibility
-@CrossOrigin(origins = "http://localhost:5173", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-        RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.OPTIONS })
 public class BookingController {
 
     @Autowired

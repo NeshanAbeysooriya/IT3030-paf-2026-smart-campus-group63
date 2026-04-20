@@ -10,6 +10,7 @@ import UserDashboard from "../pages/userDashboard";
 import Overview from "../pages/userOverview";
 import UserSettings from "../pages/userSetting";
 import AdminDashboard from "../pages/admin/adminDashboard";
+import AdminTickets from "../pages/admin/AdminTickets";
 import AdminAssets from "../pages/admin/AdminAssets";
 import AdminAssetManagementReport from "../pages/admin/AdminAssetManagementReport";
 import AssetDetail from "../pages/AssetDetail";
@@ -24,6 +25,8 @@ import MyBookings from "../pages/MyBookings";
 import AdminBookingManagement from "../pages/admin/AdminBookingManagement";
 import BookingRequest from "../pages/BookingRequest";
 import TechnicianPage from "../pages/TechnicianPage";
+import TechnicianJobs from "../pages/TechnicianJobs";
+import UserTickets from "../pages/UserTickets";
 
 // CONTACT US IMPORT
 import ContactUs from "../pages/ContactUs";
@@ -60,7 +63,7 @@ export default function AppRoutes() {
           {/* This matches /dashboard/bookings */}
           <Route path="mybookings" element={<MyBookings />} />
 
-          <Route path="mytickets" element={<h1>Support Tickets</h1>} />
+          <Route path="tickets" element={<UserTickets />} />
           <Route path="settings" element={<UserSettings />} />
         </Route>
 
@@ -81,14 +84,14 @@ export default function AppRoutes() {
             element={<AdminUserManagementReport />}
           />
           <Route path="booking" element={<AdminBookingManagement />} />
-          <Route path="ticket" element={<h1>Ticket</h1>} />
+          <Route path="ticket" element={<AdminTickets />} />
           <Route path="assets" element={<AdminAssets />} />
           <Route path="assets/report" element={<AdminAssetManagementReport />} />
         </Route>
 
         <Route path="/technician" element={<TechnicianPage />}>
-          <Route path="dashboard" element={<h1>Home</h1>} />
-          <Route path="jobs" element={<h1>jobs</h1>} />
+          <Route path="dashboard" element={<Navigate to="/technician/jobs" replace />} />
+          <Route path="jobs" element={<TechnicianJobs />} />
           <Route path="assigned" element={<h1>Task</h1>} />
           <Route path="profile" element={<h1>Profile</h1>} />
         </Route>

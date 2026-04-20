@@ -11,14 +11,39 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { getTickets } from "../../api/api";
+import TicketList from "../../components/TicketList";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
     facilityUsage: 78,
     activeBookings: 24,
-    pendingTickets: 12,
+    pendingTickets: 0,
     totalUsers: 1250,
   });
+  const [recentTickets, setRecentTickets] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await getTickets();
+      const allTickets = res.data || [];
+      setRecentTickets(allTickets.slice(0, 5)); // Show latest 5
+      setStats(prev => ({
+        ...prev,
+        pendingTickets: allTickets.filter(t => t.status === "OPEN").length
+      }));
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-10 p-6 animate-in fade-in duration-700">
@@ -164,57 +189,18 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-slate-50">
-                <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Reporter
-                </th>
-                <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Incident
-                </th>
-                <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Priority
-                </th>
-                <th className="pb-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {[1, 2, 3].map((item) => (
-                <tr
-                  key={item}
-                  className="group hover:bg-slate-50/50 transition-colors"
-                >
-                  <td className="py-5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 text-xs font-bold">
-                        AS
-                      </div>
-                      <span className="text-sm font-bold text-slate-700">
-                        Alex Sterling
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-5 text-sm text-slate-500">
-                    AC Unit Failure - Lab 04
-                  </td>
-                  <td className="py-5">
-                    <span className="px-3 py-1 bg-status-rejected/10 text-status-rejected text-[9px] font-bold uppercase rounded-full">
-                      High
-                    </span>
-                  </td>
-                  <td className="py-5 text-right">
-                    <button className="p-2 text-slate-300 hover:text-primary transition-colors">
-                      <MoreHorizontal size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="min-h-[200px]">
+          {loading ? (
+            <div className="py-12 flex justify-center items-center">
+              <div className="w-8 h-8 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+            </div>
+          ) : recentTickets.length > 0 ? (
+            <TicketList tickets={recentTickets} />
+          ) : (
+            <div className="text-center py-12 opacity-40">
+              <p className="text-xs font-bold uppercase tracking-widest">No active incidents</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

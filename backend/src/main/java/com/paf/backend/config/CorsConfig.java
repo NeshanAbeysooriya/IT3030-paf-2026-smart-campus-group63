@@ -15,7 +15,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) { //Frontend ↔ Backend connection control karanva
                 registry.addMapping("/**") // CORS mapping define karanva, onam endpoint ekk access karanna allow karanva
-                        .allowedOrigins("http://localhost:5173") // request allow karanne me port ekem vitarayi anith eva block karanva
+                        .allowedOriginPatterns("*") // allow all origins including any port
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // allow karana http methods define karanva
                         .allowedHeaders("*") // onam header ekk allow karanva JWT, Content-Type, Authorization, etc.
                         .allowCredentials(true);//Cookies / Authorization headers send karanna allow karanva, secure connection ekk thiyenava nam true karanva

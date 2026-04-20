@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 
 @RestController // REST API controller define karanva, JSON response return karanva
 @RequestMapping("/api/users") // base URL path define karanva, onam path ekt request handle karanva
-@CrossOrigin// CORS enable karanva, frontend backend call karanva
 public class UserController {
 
     private final UserService userService;// create user service object
@@ -99,6 +98,12 @@ public class UserController {
         System.out.println("TECHNICIAN LOGIN: " + auth.getName());
 
         return "Technician jobs for: " + auth.getName();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/role/{role}")
+    public List<User> getUsersByRole(@PathVariable Role role) {
+        return userService.getUsersByRole(role);
     }
 
 }

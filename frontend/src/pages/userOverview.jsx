@@ -6,15 +6,36 @@ import {
   User, 
   ArrowUpRight 
 } from 'lucide-react';
+import { getTicketsByUser } from '../api/api';
+import TicketList from '../components/TicketList';
+import { useState, useEffect } from 'react';
 
 const Overview = () => {
-  // Mock data representing the logged-in user's stats
-  const userStats = {
-    name: "Alex Sterling",
-    role: "Student",
-    totalBookings: 12,
-    ticketsSent: 8,
-    ticketsApproved: 5, // The count of tickets that moved to RESOLVED/CLOSED
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const userEmail = localStorage.getItem('email');
+  const userName = localStorage.getItem('name') || "User";
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userEmail) return;
+      setLoading(true);
+      try {
+        const res = await getTicketsByUser(userEmail);
+        setTickets(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch user overview data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [userEmail]);
+
+  const stats = {
+    totalBookings: 0, // Bookings might need a separate API call if necessary, leaving as 0 for now
+    ticketsSent: tickets.length,
+    ticketsApproved: tickets.filter(t => t.status === "RESOLVED").length,
   };
 
   return (
@@ -27,7 +48,7 @@ const Overview = () => {
         </div>
         <div>
           <h1 className="text-3xl font-black text-secondary tracking-tighter">
-            Hello, {userStats.name}
+            Hello, {userName}
           </h1>
           <p className="text-slate-500 text-sm font-medium">
             Here is what’s happening with your account today.
@@ -48,7 +69,7 @@ const Overview = () => {
               <ArrowUpRight className="text-slate-300 group-hover:text-primary transition-colors" size={20} />
             </div>
             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Total Bookings</p>
-            <h2 className="text-4xl font-black text-secondary mt-1">{userStats.totalBookings}</h2>
+            <h2 className="text-4xl font-black text-secondary mt-1">{stats.totalBookings}</h2>
             <p className="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">Completed Sessions</p>
           </div>
           {/* Subtle background decoration */}
@@ -65,7 +86,7 @@ const Overview = () => {
               <ArrowUpRight className="text-slate-300 group-hover:text-status-info transition-colors" size={20} />
             </div>
             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Tickets Sent</p>
-            <h2 className="text-4xl font-black text-secondary mt-1">{userStats.ticketsSent}</h2>
+            <h2 className="text-4xl font-black text-secondary mt-1">{stats.ticketsSent}</h2>
             <p className="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">Maintenance Requests</p>
           </div>
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-status-info/5 rounded-full blur-2xl group-hover:bg-status-info/10 transition-colors"></div>
@@ -81,7 +102,7 @@ const Overview = () => {
               <ArrowUpRight className="text-slate-300 group-hover:text-status-approved transition-colors" size={20} />
             </div>
             <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Approved Tickets</p>
-            <h2 className="text-4xl font-black text-secondary mt-1">{userStats.ticketsApproved}</h2>
+            <h2 className="text-4xl font-black text-secondary mt-1">{stats.ticketsApproved}</h2>
             <p className="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">Resolved Issues</p>
           </div>
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-status-approved/5 rounded-full blur-2xl group-hover:bg-status-approved/10 transition-colors"></div>
@@ -101,7 +122,7 @@ const Overview = () => {
             <div className="flex items-center justify-between p-4 bg-white/50 rounded-2xl border border-slate-100">
               <span className="text-sm font-bold text-slate-600 tracking-tight">Ticket Resolution Rate</span>
               <span className="text-status-approved font-black">
-                {Math.round((userStats.ticketsApproved / userStats.ticketsSent) * 100)}%
+                {stats.ticketsSent > 0 ? Math.round((stats.ticketsApproved / stats.ticketsSent) * 100) : 0}%
               </span>
             </div>
           </div>
@@ -111,6 +132,28 @@ const Overview = () => {
               <p className="text-4xl font-black text-primary tracking-tighter italic">Gold Tier</p>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* --- Recent Activity Feed --- */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-black text-secondary tracking-tighter">Your Recent Incidents</h3>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{tickets.length} Total</p>
+        </div>
+        
+        <div className="min-h-[200px]">
+          {loading ? (
+             <div className="py-12 flex justify-center items-center">
+               <div className="w-8 h-8 border-4 border-indigo-100 border-t-primary rounded-full animate-spin"></div>
+             </div>
+          ) : tickets.length > 0 ? (
+            <TicketList tickets={tickets.slice(0, 3)} />
+          ) : (
+            <div className="bg-white/40 backdrop-blur-xl border border-dashed border-slate-200 rounded-[2rem] p-12 text-center">
+              <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">No recent incidents found</p>
+            </div>
+          )}
         </div>
       </div>
 

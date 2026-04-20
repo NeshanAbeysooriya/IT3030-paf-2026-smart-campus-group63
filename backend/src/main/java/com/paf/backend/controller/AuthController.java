@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController // REST API controller define karanva, JSON response return karanva
 @RequestMapping("/api/auth")// base URL path define karanva, onam path ekt request handle karanva
-@CrossOrigin// CORS enable karanva, frontend backend call karanva
 public class AuthController {
 
     private final AuthService service; // create authservice object

@@ -126,7 +126,7 @@ export default function Home() {
                 Report technical faults and track maintenance ticket resolution.
               </p>
               <Link
-                to="/incidents"
+                to="/dashboard/tickets"
                 className="inline-flex items-center gap-2 font-black text-indigo-600 text-sm tracking-widest uppercase group-hover:gap-4 transition-all"
               >
                 Get Help <span>→</span>

@@ -92,6 +92,16 @@ export default function UserData() {
               </Link>
             )}
 
+            {userRole === "TECHNICIAN" && (
+              <Link
+                to="/technician"
+                onClick={() => setIsProfileOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors"
+              >
+                Technician Portal
+              </Link>
+            )}
+
             {/* Logout */}
             <button
               onClick={handleLogout}

@@ -10,7 +10,6 @@ import java.nio.file.*;
 
 @RestController
 @RequestMapping("/api/files") //file upload handle
-@CrossOrigin // allow backend file upload
 public class FileUploadController {
 
     private static final String UPLOAD_DIR = "uploads/"; //define upload folder path
