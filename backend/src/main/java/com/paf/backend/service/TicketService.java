@@ -11,15 +11,28 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository repo;
+    private final NotificationService notificationService;
 
-    public TicketService(TicketRepository repo) {
+    public TicketService(TicketRepository repo, NotificationService notificationService) {
         this.repo = repo;
+        this.notificationService = notificationService;
     }
 
     // CREATE
     public Ticket create(Ticket t) {
-        t.setStatus(TicketStatus.OPEN);   // ✅ FIXED
-        return repo.save(t);
+        t.setStatus(TicketStatus.OPEN); // ✅ FIXED
+        Ticket saved = repo.save(t);
+
+        // =========================
+        // ✅ ADD NOTIFICATION HERE
+        // =========================
+        if (saved.getCreatedBy() != null) {
+            notificationService.createNotificationByEmail(
+                    saved.getCreatedBy(),
+                    "Your ticket has been created successfully 🎫");
+        }
+
+        return saved;
     }
 
     // GET ALL
@@ -44,7 +57,18 @@ public class TicketService {
     public Ticket updateStatus(Long id, TicketStatus status) {
         Ticket t = getById(id);
         t.setStatus(status);
-        return repo.save(t);
+        Ticket updated = repo.save(t);
+
+        // =========================
+        // ✅ ADD NOTIFICATION HERE
+        // =========================
+        if (updated.getCreatedBy() != null) {
+            notificationService.createNotificationByEmail(
+                    updated.getCreatedBy(),
+                    "Your ticket status changed to: " + status);
+        }
+
+        return updated;
     }
 
     // RESOLVE
@@ -55,7 +79,18 @@ public class TicketService {
         }
         t.setStatus(TicketStatus.RESOLVED);
         t.setResolutionNotes(note);
-        return repo.save(t);
+        Ticket updated = repo.save(t);
+
+        // =========================
+        // ✅ ADD NOTIFICATION HERE
+        // =========================
+        if (updated.getCreatedBy() != null) {
+            notificationService.createNotificationByEmail(
+                    updated.getCreatedBy(),
+                    "Your ticket has been RESOLVED ✅");
+        }
+
+        return updated;
     }
 
     // USER FILTER
