@@ -41,8 +41,7 @@ export default function TechnicianPage() {
         <nav className="flex-1 px-4 space-y-2">
           <SidebarTab to="/technician/dashboard" label="Dashboard" />
           <SidebarTab to="/technician/jobs" label="My Jobs" />
-          <SidebarTab to="/technician/assigned" label="Assigned Tasks" />
-          <SidebarTab to="/technician/profile" label="Profile" />
+          
         </nav>
 
         {/* LOGOUT */}

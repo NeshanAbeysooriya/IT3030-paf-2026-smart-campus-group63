@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAssets } from "../contexts/AssetContext";
-import { checkAssetAvailability, getAssetBookings } from "../api/assetApi";
+import { getAssetBookings } from "../api/assetApi";
 import { ArrowLeft, Calendar, Clock, MapPin, Users, Edit, CheckCircle, XCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import Header from "../components/Header";
@@ -14,12 +14,6 @@ const AssetDetail = () => {
   const [asset, setAsset] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [checkingAvailability, setCheckingAvailability] = useState(false);
-  const [availabilityCheck, setAvailabilityCheck] = useState({
-    startTime: "",
-    endTime: "",
-    available: null,
-  });
 
   const userRole = localStorage.getItem("role") || "USER";
 
@@ -50,25 +44,6 @@ const AssetDetail = () => {
       loadAsset();
     }
   }, [id, assets]);
-
-  const handleCheckAvailability = async () => {
-    if (!availabilityCheck.startTime || !availabilityCheck.endTime) {
-      toast.error("Please select both start and end times");
-      return;
-    }
-
-    setCheckingAvailability(true);
-    try {
-      const result = await checkAssetAvailability(id, availabilityCheck.startTime, availabilityCheck.endTime);
-      setAvailabilityCheck(prev => ({ ...prev, available: result.available }));
-      toast.success(result.available ? "Asset is available!" : "Asset is not available");
-    } catch (error) {
-      console.error("Error checking availability:", error);
-      toast.error("Failed to check availability");
-    } finally {
-      setCheckingAvailability(false);
-    }
-  };
 
   const formatTime = (timeString) => {
     if (!timeString) return "";
@@ -192,71 +167,15 @@ const AssetDetail = () => {
           </div>
         </div>
 
-        {/* Availability Check */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Check Availability</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Start Time</label>
-              <input
-                type="time"
-                value={availabilityCheck.startTime}
-                onChange={(e) => setAvailabilityCheck(prev => ({ ...prev, startTime: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">End Time</label>
-              <input
-                type="time"
-                value={availabilityCheck.endTime}
-                onChange={(e) => setAvailabilityCheck(prev => ({ ...prev, endTime: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div className="flex items-end">
-              <button
-                onClick={handleCheckAvailability}
-                disabled={checkingAvailability}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {checkingAvailability ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Check
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-          {availabilityCheck.available !== null && (
-            <div className="space-y-4">
-              <div className={`p-4 rounded-md ${availabilityCheck.available ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-2">
-                    {availabilityCheck.available ? (
-                      <CheckCircle className="w-5 h-5" />
-                    ) : (
-                      <XCircle className="w-5 h-5" />
-                    )}
-                    <span className="font-medium">
-                      {availabilityCheck.available ? "Available" : "Not Available"}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/bookings?resourceId=${asset.id}`)}
-                    disabled={!availabilityCheck.available}
-                    className={`px-5 py-2 rounded-xl text-white font-semibold transition ${availabilityCheck.available ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => navigate(`/bookings?resourceId=${asset.id}`)}
+            disabled={asset.status !== "ACTIVE"}
+            className={`w-full px-6 py-3 rounded-xl text-white font-semibold transition ${asset.status === "ACTIVE" ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-300 cursor-not-allowed'}`}
+          >
+            Book Now
+          </button>
         </div>
 
         {/* Upcoming Bookings */}

@@ -63,15 +63,17 @@ const UserSettings = () => {
 
         formData.append("file", blob, "profile.png");
 
-        const uploadRes = await axios.post(
-          "/api/files/upload-image",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          },
-        );
+        if (image instanceof File) {
+  const formData = new FormData();
+  formData.append("file", image);
+
+  const uploadRes = await axios.post(
+    "/api/files/upload-image",
+    formData
+  );
+
+  imageUrl = uploadRes.data;
+}
 
         imageUrl = uploadRes.data;
       }

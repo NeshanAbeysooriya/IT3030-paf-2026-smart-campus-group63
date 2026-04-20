@@ -87,10 +87,16 @@ export default function AppRoutes() {
         </Route>
 
         <Route path="/technician" element={<TechnicianPage />}>
+<<<<<<< Updated upstream
           <Route path="dashboard" element={<h1>Home</h1>} />
           <Route path="jobs" element={<h1>jobs</h1>} />
           <Route path="assigned" element={<h1>Task</h1>} />
           <Route path="profile" element={<h1>Profile</h1>} />
+=======
+          <Route path="dashboard" element={<Navigate to="/technician/jobs" replace />} />
+          <Route path="jobs" element={<TechnicianJobs />} />
+          
+>>>>>>> Stashed changes
         </Route>
 
         {/* CATCH-ALL: Redirect any unknown URL to login */}
