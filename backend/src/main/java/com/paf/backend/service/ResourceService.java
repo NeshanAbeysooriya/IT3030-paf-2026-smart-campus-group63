@@ -72,19 +72,19 @@ public class ResourceService {
     }
 
     /**
-     * Soft delete - set status to OUT_OF_SERVICE
+     * Hard delete - completely remove resource from database
      */
     @CacheEvict(value = "resourceAvailability", allEntries = true)
     public void delete(Long id) {
         Resource resource = resourceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Resource not found with id: " + id));
 
-        resource.setStatus(Resource.ResourceStatus.OUT_OF_SERVICE);
-        resourceRepository.save(resource);
+        String resourceName = resource.getName();
+        resourceRepository.deleteById(id);
 
         // Send WebSocket message to all subscribers
         ResourceResponseDTO responseDTO = mapEntityToDTO(resource);
-        sendWebSocketMessage("DELETE", responseDTO, "Resource deleted (soft): " + responseDTO.getName());
+        sendWebSocketMessage("DELETE", responseDTO, "Resource deleted: " + resourceName);
     }
 
     /**

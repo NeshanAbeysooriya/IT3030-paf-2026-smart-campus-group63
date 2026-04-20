@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAssets } from "../../contexts/AssetContext";
 import {
@@ -16,6 +16,7 @@ import {
   Slash,
   Circle,
 } from "lucide-react";
+import { FaFileDownload } from "react-icons/fa";
 import AssetFormModal from "../../components/AssetFormModal";
 
 const typeLabels = {
@@ -185,13 +186,21 @@ const AdminAssets = () => {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleOpenModal}
-          className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/10 hover:bg-primary-hover transition-all"
-        >
-          <Plus size={16} /> Add New Asset
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleOpenModal}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/10 hover:bg-primary-hover transition-all"
+          >
+            <Plus size={16} /> Add New Asset
+          </button>
+          <Link
+            to="/admin/assets/report"
+            className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-all"
+          >
+            <FaFileDownload size={16} /> Generate Report
+          </Link>
+        </div>
       </header>
 
       <section className="grid gap-6 xl:grid-cols-[1.5fr_1fr]">

@@ -56,7 +56,7 @@ public class Resource {
     @Column(nullable = false)
     private LocalTime availabilityWindowEnd;
 
-    @Column(length = 500)
+    @Column(length = 1000, columnDefinition = "TEXT")
     private String description;
 
     @CreatedDate

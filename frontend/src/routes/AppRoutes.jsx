@@ -11,6 +11,7 @@ import Overview from "../pages/userOverview";
 import UserSettings from "../pages/userSetting";
 import AdminDashboard from "../pages/admin/adminDashboard";
 import AdminAssets from "../pages/admin/AdminAssets";
+import AdminAssetManagementReport from "../pages/admin/AdminAssetManagementReport";
 import AssetDetail from "../pages/AssetDetail";
 import AssetsPage from "../pages/AssetsPage";
 import AdminUserManagement from "../pages/admin/AdminUserManagement";
@@ -87,6 +88,7 @@ export default function AppRoutes() {
           <Route path="booking" element={<AdminBookingManagement />} />
           <Route path="ticket" element={<h1>Ticket</h1>} />
           <Route path="assets" element={<AdminAssets />} />
+          <Route path="assets/report" element={<AdminAssetManagementReport />} />
         </Route>
 
         {/* CATCH-ALL: Redirect any unknown URL to login */}
