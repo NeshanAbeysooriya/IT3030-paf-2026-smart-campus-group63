@@ -22,6 +22,7 @@ public class ResourceResponseDTO {
     private ResourceStatus status;
     private LocalTime availabilityWindowStart;
     private LocalTime availabilityWindowEnd;
+    private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

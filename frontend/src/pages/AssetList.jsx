@@ -65,34 +65,43 @@ const AssetList = () => {
   return (
     <>
       <Header />
-      <main className="max-w-7xl mx-auto px-4 pt-28 pb-10">
-        <div className="mb-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold text-secondary">Campus Assets</h1>
-            <p className="mt-2 text-sm text-slate-500 max-w-2xl">
-              Browse active campus resources in real time. Use search, filters, and pagination to find the right space or equipment.
-            </p>
+      <main className="bg-surface px-4 pt-28 pb-10">
+        <div className="mx-auto max-w-7xl">
+          {/* Header Card Section */}
+          <div className="mb-10 rounded-[1.5rem] border border-slate-100 bg-white p-8 shadow-elegant">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex-1">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-status-info/10 px-4 py-2">
+                  <span className="h-2 w-2 rounded-full bg-status-info"></span>
+                  <span className="text-xs font-semibold uppercase tracking-wide text-status-info">
+                    Active Resources
+                  </span>
+                </div>
+                <h1 className="text-3xl font-bold text-secondary">Campus Assets</h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  Browse active campus resources in real time. Use search, filters, and pagination to find the right space or equipment.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`btn-action transition-all ${viewMode === 'grid' ? 'bg-primary text-white shadow-lg' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                  <FaThLarge className="mr-2" /> Grid
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('list')}
+                  className={`btn-action transition-all ${viewMode === 'list' ? 'bg-primary text-white shadow-lg' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}>
+                  <FaList className="mr-2" /> List
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className={`btn-action ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-700'}`}>
-              <FaThLarge className="mr-2" /> Grid
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('list')}
-              className={`btn-action ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-slate-100 text-slate-700'}`}>
-              <FaList className="mr-2" /> List
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <form onSubmit={handleSearchSubmit} className="mb-8 rounded-campus border border-slate-200 bg-white p-5 shadow-elegant">
+          {/* Search & Filter Card */}
+          <form onSubmit={handleSearchSubmit} className="mb-8 rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-elegant">
         <div className="grid gap-4 xl:grid-cols-[1.5fr_1fr_1fr]">
           <div className="col-span-1 xl:col-span-2">
             <label className="block text-sm font-medium text-slate-700 mb-2">Search by name</label>
@@ -164,7 +173,7 @@ const AssetList = () => {
             <button
               type="button"
               onClick={handleClearFilters}
-              className="btn-action w-full bg-slate-100 text-slate-700 hover:bg-slate-200"
+              className="btn-action w-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
             >
               Clear Filters
             </button>
@@ -172,31 +181,35 @@ const AssetList = () => {
         </div>
       </form>
 
-      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-sm text-slate-500">
-            Showing <span className="font-semibold text-slate-900">{filteredAssets.length}</span> active assets
+      {/* Stats Bar */}
+      <div className="mb-6 rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-elegant">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-600">
+            Showing <span className="font-bold text-slate-900">{filteredAssets.length}</span> active assets
             {filteredAssets.length > 0 && ` • page ${currentPage + 1} of ${pageCount}`}
           </p>
+          <span className="inline-flex w-fit rounded-full bg-status-info/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-status-info">
+            📍 Active Listings
+          </span>
         </div>
-      </div>
+        </div>
 
       {loading ? (
-        <div className="flex min-h-[240px] items-center justify-center rounded-campus border border-dashed border-slate-300 bg-slate-50">
-          <div className="flex items-center gap-3 text-slate-600">
-            <div className="h-9 w-9 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            <span className="text-base font-medium">Loading assets...</span>
+        <div className="flex min-h-[280px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/50">
+          <div className="flex flex-col items-center gap-3 text-slate-600">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <span className="text-sm font-medium">Loading campus resources...</span>
           </div>
         </div>
       ) : error ? (
-        <div className="rounded-campus border border-rose-200 bg-rose-50 p-6 text-rose-700">
-          <p className="font-semibold">Unable to load assets</p>
-          <p>{error}</p>
+        <div className="rounded-[1.5rem] border border-rose-200 bg-rose-50 p-8 text-rose-700">
+          <p className="font-bold text-base">Unable to load assets</p>
+          <p className="mt-2 text-sm">{error}</p>
         </div>
       ) : paginatedAssets.length === 0 ? (
-        <div className="rounded-campus border border-slate-200 bg-slate-50 p-10 text-center text-slate-600">
-          <p className="text-xl font-semibold">No active assets found</p>
-          <p className="mt-2 text-sm text-slate-500">Try adjusting your filters or search terms to discover resources.</p>
+        <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 p-12 text-center text-slate-600">
+          <p className="text-lg font-semibold">No active assets found</p>
+          <p className="mt-2 text-sm">Try adjusting your filters or search terms to discover resources.</p>
         </div>
       ) : (
         <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'}`}>
@@ -207,28 +220,29 @@ const AssetList = () => {
       )}
 
       {paginatedAssets.length > 0 && (
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-campus border border-slate-200 bg-white p-4 shadow-elegant sm:flex-row">
-          <div className="text-sm text-slate-600">
-            Page {currentPage + 1} of {pageCount}
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-[1.5rem] border border-slate-100 bg-white p-6 shadow-elegant sm:flex-row">
+          <div className="text-sm font-medium text-slate-600">
+            Page <span className="font-bold text-slate-900">{currentPage + 1}</span> of <span className="font-bold text-slate-900">{pageCount}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
               disabled={currentPage === 0}
               onClick={() => handlePageChange(currentPage - 1)}
-              className="btn-action rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-action bg-primary text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-300 transition-all"
             >
               <FaChevronLeft className="mr-2" /> Previous
             </button>
             <button
               disabled={currentPage >= pageCount - 1}
               onClick={() => handlePageChange(currentPage + 1)}
-              className="btn-action rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-action bg-primary text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-slate-300 transition-all"
             >
               Next <FaChevronRight className="ml-2" />
             </button>
           </div>
         </div>
       )}
+        </div>
       </main>
       <Footer />
     </>

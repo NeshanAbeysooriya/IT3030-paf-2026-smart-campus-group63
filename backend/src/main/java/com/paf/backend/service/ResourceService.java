@@ -283,6 +283,7 @@ public class ResourceService {
         entity.setStatus(dto.getStatus());
         entity.setAvailabilityWindowStart(dto.getAvailabilityWindowStart());
         entity.setAvailabilityWindowEnd(dto.getAvailabilityWindowEnd());
+        entity.setDescription(dto.getDescription());
     }
 
     /**
@@ -298,6 +299,7 @@ public class ResourceService {
         dto.setStatus(entity.getStatus());
         dto.setAvailabilityWindowStart(entity.getAvailabilityWindowStart());
         dto.setAvailabilityWindowEnd(entity.getAvailabilityWindowEnd());
+        dto.setDescription(entity.getDescription());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
         return dto;
