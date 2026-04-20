@@ -38,7 +38,7 @@ const schema = yup.object({
       if (!availabilityWindowStart || !value) return true;
       return value > availabilityWindowStart;
     }),
-  description: yup.string().max(500, "Description must be 500 characters or less"),
+  description: yup.string().required("Description is required").max(500, "Description must be 500 characters or less"),
 });
 
 const AssetFormModal = ({ open, onClose, onSuccess, asset, existingAssets = [] }) => {
@@ -180,6 +180,7 @@ const AssetFormModal = ({ open, onClose, onSuccess, asset, existingAssets = [] }
           <label className="space-y-2 text-sm text-slate-700">
             Name
             <input
+              placeholder="e.g. Meeting Room 5,Epson Projector X500"
               {...register("name")}
               onBlur={onBlurName}
               className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
@@ -206,7 +207,13 @@ const AssetFormModal = ({ open, onClose, onSuccess, asset, existingAssets = [] }
             Capacity
             <input
               type="number"
+              min="1"
+              step="1"
+              placeholder="e.g. 50"
               {...register("capacity")}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^\d]/g, '');
+              }}
               className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
             {errors.capacity && <p className="text-xs text-rose-600">{errors.capacity.message}</p>}
@@ -215,6 +222,7 @@ const AssetFormModal = ({ open, onClose, onSuccess, asset, existingAssets = [] }
           <label className="space-y-2 text-sm text-slate-700">
             Location
             <input
+              placeholder="e.g. G1301, F604, A401, B502, library, auditorium"
               {...register("location")}
               className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
             />
@@ -259,6 +267,7 @@ const AssetFormModal = ({ open, onClose, onSuccess, asset, existingAssets = [] }
           <label className="md:col-span-2 space-y-2 text-sm text-slate-700">
             Description
             <textarea
+              placeholder="e.g. Spacious lecture hall with projector, whiteboard, and comfortable seating for students"
               {...register("description")}
               rows={4}
               className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/10"
