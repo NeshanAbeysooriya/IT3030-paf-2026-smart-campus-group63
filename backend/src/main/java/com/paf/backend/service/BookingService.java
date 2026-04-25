@@ -3,16 +3,13 @@ package com.paf.backend.service;
 import com.paf.backend.exception.BookingConflictException;
 import com.paf.backend.model.Booking;
 import com.paf.backend.model.BookingStatus;
-import com.paf.backend.model.User;
 import com.paf.backend.repository.BookingRepository;
 import com.paf.backend.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class BookingService {
@@ -20,42 +17,20 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
 
-    @Autowired // ✅ FIX: inject service
+    @Autowired
     private NotificationService notificationService;
 
     @Autowired
     private UserRepository userRepository;
 
     public Booking requestBooking(Booking booking) {
-
-        
-        
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        String email = auth.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        booking.setUser(user); // ✅ FIX HERE
-
-
-
-
-
-        List<Booking> conflicts = bookingRepository.findOverlappingBookings(
-                booking.getResourceId(), booking.getStartTime(), booking.getEndTime());
-
-        // Only block if a booking in this slot is already APPROVED
-        boolean hasApprovedConflict = conflicts.stream()
-                .anyMatch(b -> b.getStatus() == BookingStatus.APPROVED);
-
-        if (hasApprovedConflict) {
-            throw new RuntimeException("Conflict: Resource is already booked for this time.");
+        // STEP 1: Check for conflicts before doing anything else
+        if (hasConflict(booking.getResourceId(), booking.getStartTime(), booking.getEndTime())) {
+            throw new RuntimeException("Conflict: This resource is already booked for the selected time.");
         }
 
+        // STEP 2: If no conflict, set status and save
         booking.setStatus(BookingStatus.PENDING);
-
         Booking savedBooking = bookingRepository.save(booking);
 
         // =========================
@@ -70,11 +45,15 @@ public class BookingService {
         return savedBooking;
     }
 
+    public boolean hasConflict(String resourceId, LocalDateTime start, LocalDateTime end) {
+        List<Booking> conflicts = bookingRepository.findOverlappingBookings(resourceId, start, end);
+        return !conflicts.isEmpty();
+    }
+
     public Booking updateStatus(Long id, String status, String reason) {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
 
-        // FIX 2: Added try-catch for Enum conversion to prevent 500 errors
         BookingStatus newStatus;
         try {
             newStatus = BookingStatus.valueOf(status.toUpperCase());
@@ -90,7 +69,7 @@ public class BookingService {
                     .anyMatch(b -> !b.getId().equals(id) && b.getStatus() == BookingStatus.APPROVED);
 
             if (hasOtherApproved) {
-                throw new BookingConflictException("Resource is already booked for this time.");
+                throw new BookingConflictException("Cannot approve: Resource is already booked for this time.");
             }
         }
 
@@ -122,33 +101,6 @@ public class BookingService {
         return updatedBooking;
     }
 
-    public Booking cancelBooking(Long id) {
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
-
-        if (booking.getStatus() == BookingStatus.REJECTED) {
-            throw new RuntimeException("Cannot cancel a booking that has already been rejected.");
-        }
-
-        if (booking.getStatus() == BookingStatus.CANCELLED) {
-            throw new RuntimeException("Booking is already cancelled.");
-        }
-
-        booking.setStatus(BookingStatus.CANCELLED);
-        Booking updatedBooking = bookingRepository.save(booking);
-
-        // =========================
-        // ✅ ADD NOTIFICATION HERE
-        // =========================
-        if (booking.getUser() != null && booking.getUser().getEmail() != null) {
-            notificationService.createNotificationByEmail(
-                    booking.getUser().getEmail(),
-                    "Your booking has been CANCELLED ❌");
-        }
-
-        return updatedBooking;
-    }
-
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
@@ -164,7 +116,22 @@ public class BookingService {
         return bookingRepository.findByUserId(userId);
     }
 
-    public List<Booking> getBookingsByResourceId(Long resourceId) {
-        return bookingRepository.findByResourceId(resourceId);
+    public Booking cancelBooking(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        Booking updatedBooking = bookingRepository.save(booking);
+
+        // =========================
+        // ✅ ADD NOTIFICATION HERE
+        // =========================
+        if (booking.getUser() != null && booking.getUser().getEmail() != null) {
+            notificationService.createNotificationByEmail(
+                    booking.getUser().getEmail(),
+                    "Your booking has been CANCELLED ❌");
+        }
+
+        return updatedBooking;
     }
 }
