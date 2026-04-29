@@ -61,7 +61,7 @@ Make sure you have installed:
 
 1️⃣ Navigate to backend
 cd backend
-====================================
+
 2️⃣ Configure Database
 
 Open:
@@ -73,18 +73,18 @@ spring.datasource.url=jdbc:mysql://localhost:3306/campus_core_db
 spring.datasource.username=root
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
-=====================================
+
 
 3️⃣ Configure OAuth (Google Login)
 
 spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
 spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET
-======================================
+
 
 4️⃣ Run Backend
 
-mvnw.cmd spring-boot:run
-======================================
+.\mvnw.cmd spring-boot:run
+
 ✅ Backend URL
 http://localhost:8081
 
@@ -92,13 +92,13 @@ http://localhost:8081
 
 1️⃣ Navigate to frontend
 cd frontend
-=====================================
+
 2️⃣ Install dependencies
 npm install
-=====================================
+
 3️⃣ Run frontend
 npm run dev
-=====================================
+
 ✅ Frontend URL
 http://localhost:5173
 
