@@ -1,172 +1,335 @@
-📚 Campus Core Hub – Smart Campus Operations System
+# 📚 Campus Core Hub – Smart Campus Operations System
 
-📌 Project Overview
-    Campus Core Hub is a web-based system developed under the Smart Campus Operations Hub concept. It provides a centralized platform to manage university resources such as facilities,       bookings, and incident handling.
+## 📌 Project Overview
 
-The system improves operational efficiency by reducing manual processes, avoiding scheduling conflicts, and enhancing communication between users and administrators through notifications.
+**Campus Core Hub** is a web-based Smart Campus Operations System developed to streamline university resource management. The system provides a centralized platform for managing facilities, assets, bookings, incident handling, and user administration.
 
-🚀 Features
+The platform reduces manual processes, prevents scheduling conflicts, improves resource utilization, and enhances communication between users, technicians, and administrators through a real-time notification system.
 
-🔐 Authentication & Security
---OAuth 2.0 (Google Login)
---JWT-based authentication
---Role-based access control (User, Admin, Technician)
+---
 
-👥 User Management
---User registration & login
---Profile update (name, image, password)
---Role management
---Admin can block/unblock users
---Admin can view all users and generate reports
+# 🎯 Real-World Problems Solved
 
-🏢 Facilities & Assets
---View available resources (rooms, labs, equipment)
---Search and filter assets
+### Traditional Campus Management Problems
 
-📅 Booking Management
---Create booking requests
---Approval/rejection workflow
---Prevent scheduling conflicts
+* Manual facility booking processes.
+* Scheduling conflicts for rooms and resources.
+* Difficulty tracking maintenance issues.
+* Poor communication between users and administrators.
+* Lack of centralized resource management.
+* Time-consuming user administration.
 
-🛠️ Incident / Ticket System
---Create and manage tickets
---Track ticket status (OPEN → IN_PROGRESS → RESOLVED → CLOSED)
---Technician assignment
+### Campus Core Hub Solution
 
-🔔 Notifications
---Booking updates (created, approved, rejected with reason)
---Ticket updates
---Notification panel with read/unread status
+* Online facility and asset management.
+* Automated booking approval workflow.
+* Conflict-free scheduling system.
+* Digital incident and ticket management.
+* Real-time notifications.
+* Centralized user and role management.
+* Administrative reporting and monitoring.
 
-🛠️ Technologies Used
---Frontend: React
---Backend: Spring Boot
---Database: MySQL
---Authentication: OAuth 2.0 (Google Login), JWT
---API Testing: Postman
---Version Control: GitHub
+---
 
-⚙️ Setup & Installation Guide
-📌 Prerequisites
+# 🚀 Features
 
-Make sure you have installed:
+## 🔐 Authentication & Security
 
--Java JDK 17+
--Node.js (v16 or higher)
--MySQL Server
--Git
--Postman
+* Google OAuth 2.0 Login
+* JWT-Based Authentication
+* Spring Security Integration
+* Role-Based Access Control (User, Admin, Technician)
 
-🔧 Backend Setup (Spring Boot)
+## 👥 User Management
 
-1️⃣ Navigate to backend
+* User Registration & Login
+* Profile Management
+* Update Profile Information
+* Change Password
+* Upload Profile Image
+* Role Management
+* User Blocking & Unblocking
+* User Report Generation
+
+## 🏢 Facilities & Assets Management
+
+* View Available Facilities
+* View Available Assets
+* Search Resources
+* Filter Resources
+* Manage Equipment Availability
+
+## 📅 Booking Management
+
+* Create Booking Requests
+* Booking Approval & Rejection Workflow
+* Prevent Scheduling Conflicts
+* Booking Status Tracking
+
+## 🛠 Incident / Ticket Management
+
+* Create Tickets
+* Assign Technicians
+* Track Ticket Progress
+* Update Ticket Status
+
+### Ticket Workflow
+
+```text
+OPEN → IN_PROGRESS → RESOLVED → CLOSED
+```
+
+## 🔔 Notification System
+
+* Booking Created Notifications
+* Booking Approval Notifications
+* Booking Rejection Notifications
+* Ticket Status Updates
+* Read / Unread Notification Management
+
+---
+
+# 🛠 Technologies Used
+
+## Frontend
+
+* React.js
+* React Router DOM
+* Axios
+* Bootstrap / CSS
+
+## Backend
+
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+
+## Database
+
+* MySQL
+
+## Authentication & Security
+
+* Google OAuth 2.0
+* JWT Authentication
+* Role-Based Authorization
+
+## Testing
+
+* Postman
+* Manual Testing
+
+## Version Control
+
+* Git
+* GitHub
+
+---
+
+# ⚙️ System Architecture
+
+```text
+React Frontend
+      │
+      ▼
+REST APIs (Axios)
+      │
+      ▼
+Spring Boot Backend
+      │
+      ▼
+MySQL Database
+```
+
+---
+
+# 🚀 Installation Guide
+
+## Clone Repository
+
+```bash
+git clone <repository-url>
+```
+
+---
+
+## Backend Setup
+
+### Navigate
+
+```bash
 cd backend
+```
 
-2️⃣ Configure Database
+### Configure Database
 
-Open:
+Update the following in:
+
+```text
 src/main/resources/application.properties
+```
 
-Update:
-
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/campus_core_db
 spring.datasource.username=root
 spring.datasource.password=your_password
+
 spring.jpa.hibernate.ddl-auto=update
+```
 
+### Configure Google OAuth
 
-3️⃣ Configure OAuth (Google Login)
-
+```properties
 spring.security.oauth2.client.registration.google.client-id=YOUR_CLIENT_ID
+
 spring.security.oauth2.client.registration.google.client-secret=YOUR_CLIENT_SECRET
+```
 
+### Run Backend
 
-4️⃣ Run Backend
+```bash
+./mvnw spring-boot:run
+```
 
+Windows:
+
+```bash
 .\mvnw.cmd spring-boot:run
+```
 
-✅ Backend URL
+Server runs on:
+
+```text
 http://localhost:8081
+```
 
-💻 Frontend Setup (React)
+---
 
-1️⃣ Navigate to frontend
+## Frontend Setup
+
+### Navigate
+
+```bash
 cd frontend
+```
 
-2️⃣ Install dependencies
+### Install Dependencies
+
+```bash
 npm install
+```
 
-3️⃣ Run frontend
+### Run Frontend
+
+```bash
 npm run dev
+```
 
-✅ Frontend URL
+Application runs on:
+
+```text
 http://localhost:5173
+```
 
+---
 
-🔗 API Base URL
+# 🔗 API Base URL
+
+```text
 http://localhost:8081/api
+```
 
+---
 
-🧪 Testing & Validation
+# 🧪 Testing
 
-**APIs tested using Postman
-**Verified GET, POST, PUT requests
-**Checked status codes (200, 400, 500)
+### Tools Used
 
-Validation Examples
---Missing email → “Email is required”
---Invalid login → access denied
---Unauthorized access → restricted
---Blocked user → cannot login
---Server errors handled properly
+* Postman
+* Manual Testing
+* API Endpoint Validation
 
-🎨 Client Web Application
-----------Pages--------------------
+### Validations Tested
 
-Home Page
-About Us Page
-Login & Register Page (Google Login included)
-User Dashboard
-Admin Dashboard
-Technician Dashboard
-Booking Page
-Ticket Page
-Notification Panel
-Profile Page
-Assets Page
+* Missing Required Fields
+* Invalid Login Credentials
+* Unauthorized Access
+* Blocked User Access
+* Booking Conflict Handling
+* Server Error Handling
 
----------UI Design-----------------
+---
 
-Clean and user-friendly interface
-Role-based navigation
-Responsive layout
+# 🎨 Client Web Application
 
-----------API Integration-----------
+## Available Pages
 
-Axios used for API calls
-JSON-based communication
-Secure requests using JWT
+* Home Page
+* About Us Page
+* Login Page
+* Register Page
+* User Dashboard
+* Admin Dashboard
+* Technician Dashboard
+* Assets Page
+* Booking Page
+* Ticket Page
+* Notification Panel
+* Profile Page
 
-🔐 Authentication
+## UI Features
 
---OAuth 2.0 Google Login
---JWT token-based authentication
---Role-based access (User / Admin / Technician)
---Secure endpoints using Spring Security
+* Responsive Design
+* User-Friendly Interface
+* Role-Based Navigation
+* Modern Dashboard Layout
 
-🔄 Version Control
-Managed using GitHub
-Branching: main & dev
-Meaningful commit messages
-Individual contributions tracked
+---
 
-👥 Team Contribution
-Member	Contribution
-Dayani De Silva	Notification System, Role Management, OAuth 2.0, JWT Authentication
-Jayamini	Booking Management
-Dasuni	Ticket System
-Neshan	Facilities & Assets
+# 🔄 Version Control
 
-⚠️ Notes
-Developed for IT3030 – Programming Applications and Frameworks
-AI tools such as ChatGPT were used for guidance and learning
+## Branch Strategy
+
+```text
+main → Production Branch
+
+dev → Development Branch
+```
+
+## Git Practices
+
+* Feature Branch Development
+* Pull Requests
+* Meaningful Commit Messages
+* Contribution Tracking
+
+---
+
+# 👨‍💻 Team Contributions
+
+| Member          | Contribution                                                                    |
+| --------------- | ------------------------------------------------------------------------------- |
+| Dayani De Silva | Notification System, Role Management, OAuth 2.0 Integration, JWT Authentication |
+| Jayamini        | Booking Management                                                              |
+| Dasuni          | Incident / Ticket Management                                                    |
+| Neshan          | Facilities & Assets Management                                                  |
+
+---
+
+# 👨‍💻 Developed For
+
+**IT3030 – Programming Applications and Frameworks**
+
+**Project Name:** Campus Core Hub – Smart Campus Operations System
+
+---
+
+# 🤖 AI Usage Disclosure
+
+AI tools such as ChatGPT were used for learning, debugging, documentation support, and development guidance.
+
+---
+
+# 📜 License
+
+This project was developed for academic purposes as part of the **BSc (Hons) Information Technology Degree Program – SLIIT**.
