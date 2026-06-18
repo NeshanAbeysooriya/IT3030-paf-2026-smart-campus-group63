@@ -51,7 +51,14 @@ export default function AppRoutes() {
         <Route path="/bookings" element={<BookingRequest />} />
 
         {/* USER DASHBOARD ROUTES (Nested) */}
-        <Route path="/dashboard" element={<UserDashboard />}>
+        <Route
+          path="/dashboard"
+          element={
+           
+              <UserDashboard />
+           
+          }
+        >
           {/* Automatically redirect /dashboard to /dashboard/overview */}
           <Route
             index

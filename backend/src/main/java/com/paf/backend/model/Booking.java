@@ -4,13 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-/**
- * Member 2: Facility and Asset Booking Entity
- * This class includes validation constraints to satisfy
- * the 'Standard Naming and Validation' rubric requirements.
- */
+
 @Entity
 @Data
 @Table(name = "bookings")
@@ -22,24 +20,23 @@ public class Booking {
 
     @NotNull(message = "Resource selection is required")
     @Column(nullable = false)
-    private Long resourceId; // Linked to Member 1's Resource/Asset
+    private String resourceId;
 
-    /**
-     * FIX: We keep this field so your existing code (booking.getUserId()) doesn't
-     * break.
-     * We set it to insertable = false and updatable = false because the 'user'
-     * object
-     * below is now the primary owner of the column.
-     */
     @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId; // Linked to the authenticated user
+    private Long userId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    private User user;
 
     @NotNull(message = "Start time is required")
     @Future(message = "Start time must be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime startTime;
 
     @NotNull(message = "End time is required")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime endTime;
 
@@ -49,19 +46,7 @@ public class Booking {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BookingStatus status = BookingStatus.PENDING; // Initial state in workflow
+    private BookingStatus status = BookingStatus.PENDING;
 
-    private String rejectionReason; // Required for Admin Review auditability
-
-    // ******************* Notification part / User Mapping **************** */
-
-    /**
-     * FIX: This is the primary mapping for the 'user_id' column.
-     * Added 'referencedColumnName = "id"' to ensure it maps to the correct primary
-     * key in the User table.
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
-
+    private String rejectionReason;
 }

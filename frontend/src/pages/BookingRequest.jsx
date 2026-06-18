@@ -17,7 +17,6 @@ const BookingRequest = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const [conflict, setConflict] = useState(false); 
     
-    // ✅ Get today's date in YYYY-MM-DD format for validation
     const today = new Date().toISOString().split('T')[0];
 
     const queryParams = new URLSearchParams(location.search);
@@ -65,6 +64,7 @@ const BookingRequest = () => {
                     setConflict(res.data); 
                 } catch (err) {
                     console.error("Conflict check failed", err);
+                    setConflict(false);
                 }
             }
         };
@@ -76,7 +76,6 @@ const BookingRequest = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // ✅ Validation: Check if date is in the past
         if (formData.startDate < today) {
             return toast.error("You cannot book a date in the past.");
         }
@@ -98,13 +97,14 @@ const BookingRequest = () => {
                 ...formData, 
                 startTime: startFull, 
                 endTime: endFull, 
-                userId: 1 
+                user: { id: 1 } 
             });
             setIsSuccess(true); 
             toast.success("Booking submitted!");
         } catch (error) {
-            const msg = error.response?.data?.message || "Scheduling conflict!";
-            toast.error(msg);
+            console.error("Submission error:", error);
+            const errorMsg = error.response?.data?.message || "Failed to submit booking.";
+            toast.error(errorMsg);
         } finally {
             setLoading(false);
         }
@@ -145,7 +145,6 @@ const BookingRequest = () => {
          <>
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            
             <div className="mb-6 text-center md:text-left mt-20">
                 <nav className="flex items-center justify-center md:justify-start gap-2 text-slate-400 text-xs uppercase tracking-widest font-bold mb-2">
                     <span>Portal</span> <ChevronRight size={12} /> <span>Asset Management</span> <ChevronRight size={12} /> <span className="text-indigo-600">New Request</span>
@@ -156,7 +155,6 @@ const BookingRequest = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="bg-white border border-slate-200 rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-200/50">
-                    
                     <div className="space-y-4 mb-6">
                         <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
                             <div className="p-1.5 bg-indigo-50 rounded-lg text-indigo-600">
@@ -204,7 +202,7 @@ const BookingRequest = () => {
                                 <div className="flex flex-col sm:flex-row gap-3">
                                     <input 
                                         type="date" required 
-                                        min={today} // ✅ Prevents selecting past dates in browser
+                                        min={today}
                                         className="flex-[2] bg-white border border-slate-200 p-2.5 rounded-lg outline-none focus:border-indigo-500 transition-colors font-semibold text-slate-700 text-sm"
                                         value={formData.startDate}
                                         onChange={(e) => setFormData({...formData, startDate: e.target.value, endDate: e.target.value})}
@@ -224,7 +222,7 @@ const BookingRequest = () => {
                                 <div className="flex flex-col sm:flex-row gap-3">
                                     <input 
                                         type="date" required 
-                                        min={formData.startDate || today} // ✅ Ensures end date isn't before start date
+                                        min={formData.startDate || today}
                                         className="flex-[2] bg-white border border-slate-200 p-2.5 rounded-lg outline-none focus:border-indigo-500 transition-colors font-semibold text-slate-700 text-sm"
                                         value={formData.endDate}
                                         onChange={(e) => setFormData({...formData, endDate: e.target.value})}
@@ -243,12 +241,6 @@ const BookingRequest = () => {
                         {conflict && (
                             <div className="flex items-center gap-3 text-rose-700 bg-rose-50 border border-rose-100 p-4 rounded-2xl text-sm font-bold animate-pulse">
                                 <AlertTriangle size={20} /> This resource is already booked for this time. Please choose another slot.
-                            </div>
-                        )}
-
-                        {formData.startDate && formData.startDate !== formData.endDate && !conflict && (
-                            <div className="flex items-center gap-3 text-amber-700 bg-amber-50/50 border border-amber-100 p-3 rounded-xl text-xs font-medium">
-                                <Info size={16} /> This selection indicates a multi-day event.
                             </div>
                         )}
                     </div>
